@@ -46,6 +46,24 @@ class _MarketPlaceState extends State<MarketPlace> {
       Future.delayed(Duration(seconds: 5),(){init(query: query);});
     }
   }
+
+
+  showPic(BuildContext context,String url){
+    AlertDialog alert =AlertDialog(
+      contentPadding: EdgeInsets.zero,
+      content: Container(
+        height: 200,
+        width: 100,
+        padding: EdgeInsets.zero,
+        child: Image.network(url,fit: BoxFit.cover,),
+      ),
+    );
+
+    showDialog(context: context,builder:(BuildContext context){
+      return alert;
+    });
+  }
+
   
   @override
   Widget build(BuildContext context) {
@@ -147,86 +165,89 @@ class _MarketPlaceState extends State<MarketPlace> {
           padding: EdgeInsets.all(10),
             itemCount: result.length,
             itemBuilder: (context,index) {
-              return Container(
-                margin: EdgeInsets.only(bottom: 10),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                image: DecorationImage(
-                image: NetworkImage(
-                result[index]["pic"]),
-                  fit: BoxFit.cover,
-                  ),
-                ),
-                height: 220,
-                padding: EdgeInsets.zero,
-                child: Stack(
-                  children: [
-                    Positioned(
-                      child: Container(
-                        padding: EdgeInsets.only(left: 10),
-                        width: MediaQuery.of(context).size.width-20,
-                        height: 30.0,
-                        decoration: new BoxDecoration(
-                            color: Colors.grey.shade200.withOpacity(0.5)
-                        ),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                              result[index]["username"],
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      ),
-                      bottom: 90,
+              return GestureDetector(
+                onTap: (){showPic(context, result[index]["pic"]);},
+                child: Container(
+                  margin: EdgeInsets.only(bottom: 10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                  image: DecorationImage(
+                  image: NetworkImage(
+                  result[index]["pic"]),
+                    fit: BoxFit.cover,
                     ),
-                    Positioned(
-                        bottom: 0,
-                        width: MediaQuery.of(context).size.width-20,
+                  ),
+                  height: 220,
+                  padding: EdgeInsets.zero,
+                  child: Stack(
+                    children: [
+                      Positioned(
                         child: Container(
-                          decoration: BoxDecoration(
-                              boxShadow: [BoxShadow(
-                                color: Colors.grey,
-                                blurRadius: 5.0,
-                              ),],
-                            borderRadius: BorderRadius.only(bottomRight: Radius.circular(10),bottomLeft: Radius.circular(10)),
-                            color: Colors.white,
+                          padding: EdgeInsets.only(left: 10),
+                          width: MediaQuery.of(context).size.width-20,
+                          height: 30.0,
+                          decoration: new BoxDecoration(
+                              color: Colors.grey.shade200.withOpacity(0.5)
                           ),
-                          padding: EdgeInsets.all(10),
-                          height: 90,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  children: [
-                                    Text(result[index]["itemName"],style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
-                                    SizedBox(height: 3,),
-                                    Text("Rs.${result[index]["price"]}/Kg",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16),),
-                                    SizedBox(height: 3,),
-                                    Text(result[index]["place"],style: TextStyle(fontWeight: FontWeight.bold,color: Colors.grey,fontSize: 16),overflow: TextOverflow.ellipsis,),
-                                  ],
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                )
-                              ),
-                              ClipOval(
-                                child: Material(
-                                  color: Colors.green, // Button color
-                                  child: InkWell(
-                                    splashColor: Colors.green[400], // Splash color
-                                    onTap: () async{
-                                      await canLaunch("tel:${result[index]["phone"]}") ? await launch("tel:${result[index]["phone"]}") : throw 'Could not launch phone app';
-                                    },
-                                    child: SizedBox(width: 56, height: 56, child: Icon(Icons.phone,color: Colors.white,)),
-                                  ),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                                result[index]["username"],
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                        bottom: 90,
+                      ),
+                      Positioned(
+                          bottom: 0,
+                          width: MediaQuery.of(context).size.width-20,
+                          child: Container(
+                            decoration: BoxDecoration(
+                                boxShadow: [BoxShadow(
+                                  color: Colors.grey,
+                                  blurRadius: 5.0,
+                                ),],
+                              borderRadius: BorderRadius.only(bottomRight: Radius.circular(10),bottomLeft: Radius.circular(10)),
+                              color: Colors.white,
+                            ),
+                            padding: EdgeInsets.all(10),
+                            height: 90,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    children: [
+                                      Text(result[index]["itemName"],style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
+                                      SizedBox(height: 3,),
+                                      Text("Rs.${result[index]["price"]}/Kg",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16),),
+                                      SizedBox(height: 3,),
+                                      Text(result[index]["place"],style: TextStyle(fontWeight: FontWeight.bold,color: Colors.grey,fontSize: 16),overflow: TextOverflow.ellipsis,),
+                                    ],
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  )
                                 ),
-                              )
-                            ],
-                          ),
-                        )
-                    )
-                  ],
-                ),
-            );
+                                ClipOval(
+                                  child: Material(
+                                    color: Colors.green, // Button color
+                                    child: InkWell(
+                                      splashColor: Colors.green[400], // Splash color
+                                      onTap: () async{
+                                        await canLaunch("tel:${result[index]["phone"]}") ? await launch("tel:${result[index]["phone"]}") : throw 'Could not launch phone app';
+                                      },
+                                      child: SizedBox(width: 56, height: 56, child: Icon(Icons.phone,color: Colors.white,)),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          )
+                      )
+                    ],
+                  ),
+            ),
+              );
           }
         )
       ),
