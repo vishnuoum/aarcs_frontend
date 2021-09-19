@@ -120,7 +120,7 @@ class _RentState extends State<Rent> {
               }, icon: Icon(Icons.search)):Container(),
               PopupMenuButton(itemBuilder: (context) {
                 return List.generate(2, (index) {
-                  var options=["Add","Your History"];
+                  var options=["Add","Your Tools"];
                   return PopupMenuItem(
                     value: index,
                     child: Text(options[index]),
@@ -139,6 +139,12 @@ class _RentState extends State<Rent> {
                         break;
                       }
                       case 1:{
+                        await Navigator.pushNamed(context, "/userTools",);
+                        setState(() {
+                          loading=true;
+                          result=[];
+                        });
+                        init();
                         break;
                       }
                     }
@@ -218,7 +224,7 @@ class _RentState extends State<Rent> {
                                         SizedBox(height: 3,),
                                         Text("Rs.${result[index]["price"]}/Hr",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16),),
                                         SizedBox(height: 3,),
-                                        Text(result[index]["place"],style: TextStyle(fontWeight: FontWeight.bold,color: Colors.grey,fontSize: 16),),
+                                        Text("${result[index]["place"]} ${result[index]["district"]}",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.grey,fontSize: 16),),
                                       ],
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                     )

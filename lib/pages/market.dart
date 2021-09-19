@@ -146,6 +146,11 @@ class _MarketPlaceState extends State<MarketPlace> {
                   }
                   case 1:{
                     await Navigator.pushNamed(context, "/userItems",);
+                    setState(() {
+                      loading=true;
+                      result=[];
+                    });
+                    init();
                     break;
                   }
                 }

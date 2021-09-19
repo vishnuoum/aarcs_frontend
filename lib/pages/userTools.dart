@@ -2,15 +2,14 @@ import 'package:agri_app/services/listService.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class UserItems extends StatefulWidget {
-  const UserItems({Key? key}) : super(key: key);
+class UserTools extends StatefulWidget {
+  const UserTools({Key? key}) : super(key: key);
 
   @override
-  _UserItemsState createState() => _UserItemsState();
+  _UserToolsState createState() => _UserToolsState();
 }
 
-class _UserItemsState extends State<UserItems> {
-
+class _UserToolsState extends State<UserTools> {
   bool isSearch=false;
   TextEditingController searchController=TextEditingController();
   TextEditingController name=TextEditingController();
@@ -42,7 +41,7 @@ class _UserItemsState extends State<UserItems> {
 
   void init({String query=""})async{
     String? phone=sharedPreferences.getString("phone");
-    result=await listService.getUserItems(phone: phone,query: query);
+    result=await listService.getUserTools(phone: phone,query: query);
     print(result);
     if(result!="error"){
       setState(() {
@@ -127,22 +126,18 @@ class _UserItemsState extends State<UserItems> {
 
   showBottomSheet(BuildContext context,String id){
     showModalBottomSheet(enableDrag: true,isScrollControlled: true,shape: RoundedRectangleBorder(borderRadius: BorderRadius.only(topRight: Radius.circular(10),topLeft: Radius.circular(10))),context: context, builder: (BuildContext context){
-      return StatefulBuilder(builder: (BuildContext context,setState) {
+      return StatefulBuilder(builder: (BuildContext context,setState){
         return Container(
           child: ListView(
-            padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-            children: [
+            padding: EdgeInsets.symmetric(vertical: 20,horizontal: 20),
+            children:[
               SizedBox(height: 60,),
-              Align(child: Text("Edit Item", style: TextStyle(
-                  color: Colors.green,
-                  fontSize: 30,
-                  fontWeight: FontWeight.bold),),
-                alignment: Alignment.centerLeft,),
+              Align(child: Text("Edit Tool",style: TextStyle(color: Colors.green,fontSize: 30,fontWeight: FontWeight.bold),),alignment: Alignment.centerLeft,),
               SizedBox(height: 40,),
-              Text("Item Name"),
+              Text("Tool Name"),
               Container(
                 margin: EdgeInsets.only(top: 10),
-                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+                padding: EdgeInsets.symmetric(vertical: 5,horizontal: 20),
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     color: Colors.grey[200]
@@ -159,10 +154,10 @@ class _UserItemsState extends State<UserItems> {
                 ),
               ),
               SizedBox(height: 15,),
-              Text("Price/Kg"),
+              Text("Price/Hr"),
               Container(
                 margin: EdgeInsets.only(top: 10),
-                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+                padding: EdgeInsets.symmetric(vertical: 5,horizontal: 20),
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     color: Colors.grey[200]
@@ -175,7 +170,7 @@ class _UserItemsState extends State<UserItems> {
                   style: TextStyle(color: Colors.black),
                   decoration: InputDecoration(
                       border: InputBorder.none,
-                      hintText: 'Price/Kg'
+                      hintText: 'Price/Hr'
                   ),
                 ),
               ),
@@ -183,7 +178,7 @@ class _UserItemsState extends State<UserItems> {
               Text("Place"),
               Container(
                 margin: EdgeInsets.only(top: 10),
-                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+                padding: EdgeInsets.symmetric(vertical: 5,horizontal: 20),
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     color: Colors.grey[200]
@@ -203,42 +198,24 @@ class _UserItemsState extends State<UserItems> {
               Text("District"),
               Container(
                 margin: EdgeInsets.only(top: 10),
-                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+                padding: EdgeInsets.symmetric(vertical: 5,horizontal: 20),
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     color: Colors.grey[200]
                 ),
                 child: DropdownButtonHideUnderline(
-                  child: DropdownButton(items: <String>[
-                    'Select a District',
-                    'Kasargod',
-                    'Kannur',
-                    'Wayanad',
-                    'Palakkad',
-                    'Malapuram',
-                    'Kozhikode',
-                    'Thrissur',
-                    'Ernakulam',
-                    'Idukki',
-                    'Alappuzha',
-                    'Kottayam',
-                    'Pathanamthitta',
-                    'Kollam',
-                    'Thiruvananthapuram'
-                  ]
+                  child: DropdownButton(items: <String>['Select a District','Kasargod', 'Kannur', 'Wayanad', 'Palakkad','Malapuram','Kozhikode','Thrissur','Ernakulam','Idukki','Alappuzha','Kottayam','Pathanamthitta','Kollam','Thiruvananthapuram']
                       .map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
-                      child: Text(value, style: TextStyle(
-                          color: value == "Select a District"
-                              ? Colors.grey[700]
-                              : Colors.black),),
+                      child: Text(value,style: TextStyle(color:value=="Select a District"?Colors.grey[700]:Colors.black),),
                     );
                   }).toList(),
                     isExpanded: true,
                     underline: null,
                     value: district,
                     onChanged: (String? newValue) {
+                      print(newValue);
                       setState(() {
                         district = newValue!;
                       });
@@ -247,50 +224,34 @@ class _UserItemsState extends State<UserItems> {
                 ),
               ),
               SizedBox(height: 15,),
-              TextButton(onPressed: () async {
+              TextButton(onPressed: ()async{
                 showLoading(context);
-                if (name.text.length != 0 && price.text.length != 0 &&
-                    place.text.length != 0 && district != "Select a Distirct") {
-                  var res = await listService.editUserItems(name: name.text,
-                      price: price.text,
-                      district: district,
-                      id: id,
-                      place: place.text);
-                  if (res == "done") {
+                if(name.text.length!=0 && price.text.length!=0 && place.text.length!=0 && district!="Select a Distirct"){
+                  var res=await listService.editUserTool(name:name.text,price: price.text, district: district,id:id,place: place.text);
+                  if(res=="done"){
                     Navigator.pop(context);
                     Navigator.pop(context);
                     setState(() {
-                      loading = true;
-                      txt = "Loading";
+                      loading=true;
+                      txt="Loading";
                     });
                     init();
                   }
-                  else if (res == "netError") {
+                  else if(res=="netError"){
                     Navigator.pop(context);
-                    alertDialog(
-                        "Something went wrong. Please check your network connection and try again!!");
+                    alertDialog("Something went wrong. Please check your network connection and try again!!");
                   }
-                  else {
+                  else{
                     Navigator.pop(context);
                     alertDialog("Something went wrong.");
                   }
                 }
-                else {
+                else{
                   alertDialog("Please complete the form");
                 }
-              },
-                child: Text("Update", style: TextStyle(fontSize: 17),),
-                style: TextButton.styleFrom(shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
-                    backgroundColor: Colors.green,
-                    primary: Colors.white,
-                    padding: EdgeInsets.all(18)),),
+              }, child: Text("Update",style: TextStyle(fontSize: 17),),style: TextButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),backgroundColor: Colors.green,primary: Colors.white,padding: EdgeInsets.all(18)),),
               SizedBox(height: 15,),
-              TextButton(onPressed: () {
-                Navigator.pop(context);
-              },
-                child: Text("Cancel", style: TextStyle(fontSize: 17)),
-                style: TextButton.styleFrom(padding: EdgeInsets.all(18)),)
+              TextButton(onPressed: (){Navigator.pop(context);}, child: Text("Cancel",style: TextStyle(fontSize: 17)),style: TextButton.styleFrom(padding: EdgeInsets.all(18)),)
             ],
           ),
         );
@@ -349,7 +310,7 @@ class _UserItemsState extends State<UserItems> {
                     searchController.text.length!=0?IconButton(onPressed: (){searchController.clear();setState(() {});}, icon: Icon(Icons.clear)):Container()
                   ],
                 ),
-              ):Text("Your Items",style: TextStyle(color: Colors.green),),
+              ):Text("Your Tools",style: TextStyle(color: Colors.green),),
               actions: !isSearch?[
               !loading?IconButton(onPressed: (){
                 setState(() {
@@ -411,7 +372,7 @@ class _UserItemsState extends State<UserItems> {
                                       children: [
                                         Text(result[index]["name"],style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
                                         SizedBox(height: 3,),
-                                        Text("Rs.${result[index]["price"]}/Kg",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16),),
+                                        Text("Rs.${result[index]["price"]}/Hr",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16),),
                                         SizedBox(height: 3,),
                                         Text("${result[index]["place"]} ${result[index]["district"]}",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.grey,fontSize: 16),overflow: TextOverflow.ellipsis,),
                                       ],

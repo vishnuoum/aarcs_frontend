@@ -118,114 +118,156 @@ class _ProfileState extends State<Profile> {
         district=result[0]["district"];
         name.text=result[0]["name"];
         showModalBottomSheet(enableDrag: true,isScrollControlled: true,shape: RoundedRectangleBorder(borderRadius: BorderRadius.only(topRight: Radius.circular(10),topLeft: Radius.circular(10))),context: context, builder: (BuildContext context){
-          return Container(
-            child: ListView(
-              padding: EdgeInsets.symmetric(vertical: 20,horizontal: 20),
-              children:[
-                SizedBox(height: 60,),
-                Align(child: Text("Edit Profile",style: TextStyle(color: Colors.green,fontSize: 30,fontWeight: FontWeight.bold),),alignment: Alignment.centerLeft,),
-                SizedBox(height: 40,),
-                Text("Name"),
-                Container(
-                  margin: EdgeInsets.only(top: 10),
-                  padding: EdgeInsets.symmetric(vertical: 5,horizontal: 20),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: Colors.grey[200]
-                  ),
-                  child: TextField(
-                    textCapitalization: TextCapitalization.words,
-                    controller: name,
-                    focusNode: null,
-                    style: TextStyle(color: Colors.black),
-                    decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'Name'
+          return StatefulBuilder(builder: (BuildContext context,setState)
+          {
+            return Container(
+              child: ListView(
+                padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+                children: [
+                  SizedBox(height: 60,),
+                  Align(child: Text("Edit Profile", style: TextStyle(
+                      color: Colors.green,
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold),),
+                    alignment: Alignment.centerLeft,),
+                  SizedBox(height: 40,),
+                  Text("Name"),
+                  Container(
+                    margin: EdgeInsets.only(top: 10),
+                    padding: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.grey[200]
+                    ),
+                    child: TextField(
+                      textCapitalization: TextCapitalization.words,
+                      controller: name,
+                      focusNode: null,
+                      style: TextStyle(color: Colors.black),
+                      decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Name'
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(height: 15,),
-                Text("Phone (not editable)"),
-                Container(
-                  margin: EdgeInsets.only(top: 10),
-                  padding: EdgeInsets.symmetric(vertical: 5,horizontal: 20),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: Colors.grey[200]
-                  ),
-                  child: TextField(
-                    enabled: false,
-                    keyboardType: TextInputType.phone,
-                    controller: phoneController,
-                    // textCapitalization: TextCapitalization.sentences,
-                    focusNode: null,
-                    style: TextStyle(color: Colors.black),
-                    decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'Phone No.'
+                  SizedBox(height: 15,),
+                  Text("Phone (not editable)"),
+                  Container(
+                    margin: EdgeInsets.only(top: 10),
+                    padding: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.grey[200]
+                    ),
+                    child: TextField(
+                      enabled: false,
+                      keyboardType: TextInputType.phone,
+                      controller: phoneController,
+                      // textCapitalization: TextCapitalization.sentences,
+                      focusNode: null,
+                      style: TextStyle(color: Colors.black),
+                      decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Phone No.'
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(height: 15,),
-                Text("District"),
-                Container(
-                  margin: EdgeInsets.only(top: 10),
-                  padding: EdgeInsets.symmetric(vertical: 5,horizontal: 20),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: Colors.grey[200]
+                  SizedBox(height: 15,),
+                  Text("District"),
+                  Container(
+                    margin: EdgeInsets.only(top: 10),
+                    padding: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.grey[200]
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton(items: <String>[
+                        'Select a District',
+                        'Kasargod',
+                        'Kannur',
+                        'Wayanad',
+                        'Palakkad',
+                        'Malapuram',
+                        'Kozhikode',
+                        'Thrissur',
+                        'Ernakulam',
+                        'Idukki',
+                        'Alappuzha',
+                        'Kottayam',
+                        'Pathanamthitta',
+                        'Kollam',
+                        'Thiruvananthapuram'
+                      ]
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value, style: TextStyle(
+                              color: value == "Select a District" ? Colors
+                                  .grey[700] : Colors.black),),
+                        );
+                      }).toList(),
+                        isExpanded: true,
+                        underline: null,
+                        value: district,
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            district = newValue!;
+                          });
+                        },
+                      ),
+                    ),
                   ),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton(items: <String>['Select a District','Kasargod', 'Kannur', 'Wayanad', 'Palakkad','Malapuram','Kozhikode','Thrissur','Ernakulam','Idukki','Alappuzha','Kottayam','Pathanamthitta','Kollam','Thiruvananthapuram']
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value,style: TextStyle(color:value=="Select a District"?Colors.grey[700]:Colors.black),),
-                      );
-                    }).toList(),
-                      isExpanded: true,
-                      underline: null,
-                      value: district,
-                      onChanged: (String? newValue) {
+                  SizedBox(height: 15,),
+                  TextButton(onPressed: () async {
+                    showLoading(context);
+                    if (name.text.length != 0 &&
+                        phoneController.text.length != 0 &&
+                        district != "Select a Distirct") {
+                      var res = await loginService.update(name: name.text,
+                          phone: phoneController.text,
+                          district: district,
+                          id: result[0]["id"]);
+                      if (res == "done") {
+                        await sharedPreferences.setString(
+                            "phone", phoneController.text);
+                        Navigator.pop(context);
+                        Navigator.pop(context);
                         setState(() {
-                          district = newValue!;
+                          loading = true;
                         });
-                      },
-                    ),
-                  ),
-                ),
-                SizedBox(height: 15,),
-                TextButton(onPressed: ()async{
-                  showLoading(context);
-                  if(name.text.length!=0 && phoneController.text.length!=0 && district!="Select a Distirct"){
-                    var res=await loginService.update(name:name.text,phone: phoneController.text, district: district,id:result[0]["id"]);
-                    if(res=="done"){
-                      await sharedPreferences.setString("phone", phoneController.text);
-                      Navigator.pop(context);
-                      Navigator.pop(context);
-                      setState(() {
-                        loading=true;
-                      });
-                      getProfile();
+                        getProfile();
+                      }
+                      else if (res == "netError") {
+                        Navigator.pop(context);
+                        alertDialog(
+                            "Something went wrong. Please check your network connection and try again!!");
+                      }
+                      else {
+                        Navigator.pop(context);
+                        alertDialog("Wrong Phone No. or Password");
+                      }
                     }
-                    else if(res=="netError"){
-                      Navigator.pop(context);
-                      alertDialog("Something went wrong. Please check your network connection and try again!!");
+                    else {
+                      alertDialog("Please complete the form");
                     }
-                    else{
-                      Navigator.pop(context);
-                      alertDialog("Wrong Phone No. or Password");
-                    }
-                  }
-                  else{
-                    alertDialog("Please complete the form");
-                  }
-                }, child: Text("Update",style: TextStyle(fontSize: 17),),style: TextButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),backgroundColor: Colors.green,primary: Colors.white,padding: EdgeInsets.all(18)),),
-                SizedBox(height: 15,),
-                TextButton(onPressed: (){Navigator.pop(context);}, child: Text("Cancel",style: TextStyle(fontSize: 17)),style: TextButton.styleFrom(padding: EdgeInsets.all(18)),)
-              ],
-            ),
-          );
+                  },
+                    child: Text("Update", style: TextStyle(fontSize: 17),),
+                    style: TextButton.styleFrom(shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                        backgroundColor: Colors.green,
+                        primary: Colors.white,
+                        padding: EdgeInsets.all(18)),),
+                  SizedBox(height: 15,),
+                  TextButton(onPressed: () {
+                    Navigator.pop(context);
+                  },
+                    child: Text("Cancel", style: TextStyle(fontSize: 17)),
+                    style: TextButton.styleFrom(padding: EdgeInsets.all(18)),)
+                ],
+              ),
+            );
+          });
         });
       },child: Icon(Icons.edit),tooltip: "Edit Profile",),
       body: loading?Center(
