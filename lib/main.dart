@@ -10,6 +10,7 @@ import 'package:agri_app/pages/otp.dart';
 import 'package:agri_app/pages/profile.dart';
 import 'package:agri_app/pages/rent.dart';
 import 'package:agri_app/pages/signup.dart';
+import 'package:agri_app/pages/userItems.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -40,7 +41,8 @@ class MyApp extends StatelessWidget {
         "/addNewTool":(context) => AddNewTool(),
         "/otp":(context) => OTP(arguments: ModalRoute.of(context)!.settings.arguments as Map,),
         "/profile":(context) => Profile(),
-        "/changePassword":(context) => ChangePassword(arguments: ModalRoute.of(context)!.settings.arguments as Map,)
+        "/changePassword":(context) => ChangePassword(arguments: ModalRoute.of(context)!.settings.arguments as Map,),
+        "/userItems":(context) => UserItems()
       },
       initialRoute: "/",
     );
