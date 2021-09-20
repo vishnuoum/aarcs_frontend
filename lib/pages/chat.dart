@@ -1,4 +1,5 @@
 
+import 'package:agri_app/services/chatService.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socket_io_client/socket_io_client.dart';
@@ -12,17 +13,18 @@ class Chat extends StatefulWidget {
 }
 
 class _ChatState extends State<Chat> {
+
   late Socket socket;
   String date="0";
+  String txt="Loading";
   int flag=0;
   late SharedPreferences sharedPreferences;
-  List messages=[{"sender":"Sender","message":"Hello hai!","date":"17/08/2021","dateTime":"2021-09-20T13:30:25.660Z"},
-    {"sender":"Sender","message":"Hello hai!","date":"17/08/2021","dateTime":"2021-09-20T09:30:25.660Z"},
-    {"sender":"You","message":"Hello hai!","date":"17/08/2021","dateTime":"2021-09-20T09:30:25.660Z"}];
-
+  List messages=[];
+  bool loading=true,connecting=true;
   TextEditingController msg=TextEditingController(text: "");
   ScrollController scrollController=ScrollController();
   String? phone="";
+  ChatService chatService=ChatService();
 
   @override
   void initState() {
@@ -34,6 +36,7 @@ class _ChatState extends State<Chat> {
   void initSharedPreferences()async{
     sharedPreferences = await SharedPreferences.getInstance();
     phone=sharedPreferences.getString("phone");
+    initChat();
   }
 
   void init()async{
@@ -45,7 +48,12 @@ class _ChatState extends State<Chat> {
 
       // Connect to web socket
       socket.connect();
-      socket.on('connect', (_) => print('connected'));
+      socket.on('connect', (_){
+        setState(() {
+          connecting=false;
+        });
+        print('connected');
+      });
       socket.on('message',(data) {
         setState(() {
           messages.add(data);
@@ -53,9 +61,37 @@ class _ChatState extends State<Chat> {
       });
       socket.emit("connection");
     }catch(e){
+      setState(() {
+        txt="Something went wrong";
+      });
       print(e);
+      Future.delayed(Duration(seconds: 5),(){
+        init();
+      });
     }
   }
+
+
+
+  void initChat()async{
+    var result = await chatService.getMessages(phone: phone);
+    if(result!="error"){
+      setState(() {
+        loading=false;
+        messages=result;
+      });
+    }
+    else{
+      setState(() {
+        txt="Something went wrong";
+      });
+      Future.delayed(Duration(seconds: 5),(){
+        initChat();
+      });
+    }
+  }
+
+
 
   @override
   void dispose() {
@@ -77,7 +113,16 @@ class _ChatState extends State<Chat> {
         elevation: 6,
         backgroundColor: Colors.white,
       ),
-      body: GestureDetector(
+      body: loading&&connecting?Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(height: 50,width: 50,child: CircularProgressIndicator(strokeWidth: 5,valueColor: AlwaysStoppedAnimation(Colors.green),),),
+            SizedBox(height: 10,),
+            Text(txt)
+          ],
+        ),
+      ):GestureDetector(
         onDoubleTap: (){
           FocusScope.of(context).unfocus();
         },
