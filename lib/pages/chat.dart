@@ -171,7 +171,7 @@ class _ChatState extends State<Chat> {
                             onPressed: (){
                               print("Send");
                               setState(() {
-                                messages.add({"sender":"You","message":msg.text,"dateTime":"2021-09-20T09:30:25.660Z"});
+                                messages.add({"sender":"You","message":msg.text,"dateTime":"${DateTime.now()}"});
                                 // Future.delayed(Duration(milliseconds: 20),(){
                                 //   scrollController.position.jumpTo(scrollController.position.maxScrollExtent);
                                 // });
