@@ -1,4 +1,8 @@
+
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:socket_io_client/socket_io_client.dart';
+import 'package:intl/intl.dart';
 
 class Chat extends StatefulWidget {
   const Chat({Key? key}) : super(key: key);
@@ -8,16 +12,61 @@ class Chat extends StatefulWidget {
 }
 
 class _ChatState extends State<Chat> {
-  List messages=[{"sender":"Sender","message":"Hello hai!","date":"17/08/2021","time":"6.40PM"},
-    {"sender":"Sender","message":"Hello hai!","date":"17/08/2021","time":"6.40PM"},
-    {"sender":"You","message":"Hello hai!","date":"17/08/2021","time":"7.00PM"}];
+  late Socket socket;
+  String date="0";
+  int flag=0;
+  late SharedPreferences sharedPreferences;
+  List messages=[{"sender":"Sender","message":"Hello hai!","date":"17/08/2021","dateTime":"2021-09-20T13:30:25.660Z"},
+    {"sender":"Sender","message":"Hello hai!","date":"17/08/2021","dateTime":"2021-09-20T09:30:25.660Z"},
+    {"sender":"You","message":"Hello hai!","date":"17/08/2021","dateTime":"2021-09-20T09:30:25.660Z"}];
 
   TextEditingController msg=TextEditingController(text: "");
   ScrollController scrollController=ScrollController();
+  String? phone="";
+
+  @override
+  void initState() {
+    initSharedPreferences();
+    init();
+    super.initState();
+  }
+
+  void initSharedPreferences()async{
+    sharedPreferences = await SharedPreferences.getInstance();
+    phone=sharedPreferences.getString("phone");
+  }
+
+  void init()async{
+    try {
+      socket = io('http://10.0.2.2:3000', <String, dynamic>{
+        'transports': ['websocket'],
+        'autoConnect': false,
+      });
+
+      // Connect to web socket
+      socket.connect();
+      socket.on('connect', (_) => print('connected'));
+      socket.on('message',(data) {
+        setState(() {
+          messages.add(data);
+        });
+      });
+      socket.emit("connection");
+    }catch(e){
+      print(e);
+    }
+  }
+
+  @override
+  void dispose() {
+    socket.dispose();
+    super.dispose();
+  }
 
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: Colors.green[200],
       appBar: AppBar(
@@ -29,7 +78,7 @@ class _ChatState extends State<Chat> {
         backgroundColor: Colors.white,
       ),
       body: GestureDetector(
-        onTap: (){
+        onDoubleTap: (){
           FocusScope.of(context).unfocus();
         },
         child: SizedBox.expand(
@@ -66,7 +115,8 @@ class _ChatState extends State<Chat> {
                                 padding: const EdgeInsets.only(bottom: 5.0),
                                 child: Text(messages[index]["sender"],style: TextStyle(fontSize: 11),),
                               ),
-                              Padding(padding: messages[index]["sender"]=="You"?EdgeInsets.only(right: 5):EdgeInsets.only(left: 5),child: Text(messages[index]["message"],style: TextStyle(fontSize: 16),),)
+                              Padding(padding: messages[index]["sender"]=="You"?EdgeInsets.only(right: 5):EdgeInsets.only(left: 5),child: Text(messages[index]["message"],style: TextStyle(fontSize: 16),),),
+                              Padding(padding: EdgeInsets.only(top: 5),child: Text( DateFormat('dd/MM/yyyy hh:mm a').format(DateTime.parse(messages[index]["dateTime"])),style: TextStyle(fontSize: 11),),)
                             ],
                           ),
                         ),
@@ -121,12 +171,13 @@ class _ChatState extends State<Chat> {
                             onPressed: (){
                               print("Send");
                               setState(() {
-                                messages.add({"sender":"You","message":msg.text,"date":"09/08/2021","time":"9.00PM"});
-                                msg.clear();
+                                messages.add({"sender":"You","message":msg.text,"dateTime":"2021-09-20T09:30:25.660Z"});
                                 // Future.delayed(Duration(milliseconds: 20),(){
                                 //   scrollController.position.jumpTo(scrollController.position.maxScrollExtent);
                                 // });
                               });
+                              socket.emit('message', {"sender":phone,"message":msg.text});
+                              msg.clear();
                             },
                             style: TextButton.styleFrom(backgroundColor: Colors.green,shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),padding: EdgeInsets.all(12),primary: Colors.white),
                           )
