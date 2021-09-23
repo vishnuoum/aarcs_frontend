@@ -139,6 +139,14 @@ class _HomeState extends State<Home> {
                 Navigator.pushNamed(context, "/rent");
               },
             ):Container(),
+            checkLogin()?ListTile(
+              leading: Icon(Icons.settings),
+              title: Text("Lend a Land"),
+              onTap: (){
+                Navigator.pop(context);
+                Navigator.pushNamed(context, "/land");
+              },
+            ):Container(),
             ListTile(
               leading: Icon(Icons.person),
               title: Text("Contact Us"),

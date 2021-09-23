@@ -1,9 +1,11 @@
 import 'package:agri_app/pages/Crop.dart';
 import 'package:agri_app/pages/addNewCrop.dart';
+import 'package:agri_app/pages/addNewLand.dart';
 import 'package:agri_app/pages/addNewTool.dart';
 import 'package:agri_app/pages/changePassword.dart';
 import 'package:agri_app/pages/chat.dart';
 import 'package:agri_app/pages/home.dart';
+import 'package:agri_app/pages/land.dart';
 import 'package:agri_app/pages/login.dart';
 import 'package:agri_app/pages/market.dart';
 import 'package:agri_app/pages/otp.dart';
@@ -11,6 +13,7 @@ import 'package:agri_app/pages/profile.dart';
 import 'package:agri_app/pages/rent.dart';
 import 'package:agri_app/pages/signup.dart';
 import 'package:agri_app/pages/userItems.dart';
+import 'package:agri_app/pages/userLands.dart';
 import 'package:agri_app/pages/userTools.dart';
 import 'package:flutter/material.dart';
 
@@ -38,13 +41,16 @@ class MyApp extends StatelessWidget {
         "/chat": (context) => Chat(),
         "/market":(context) => MarketPlace(),
         "/rent" : (context) => Rent(),
+        "/land" : (context) => Land(),
         "/addNewCrop":(context) => AddNewCrop(),
         "/addNewTool":(context) => AddNewTool(),
+        "/addNewLand":(context) => AddNewLand(),
         "/otp":(context) => OTP(arguments: ModalRoute.of(context)!.settings.arguments as Map,),
         "/profile":(context) => Profile(),
         "/changePassword":(context) => ChangePassword(arguments: ModalRoute.of(context)!.settings.arguments as Map,),
         "/userItems":(context) => UserItems(),
         "/userTools":(context) => UserTools(),
+        "/userLands":(context) => UserLands(),
       },
       initialRoute: "/",
     );
