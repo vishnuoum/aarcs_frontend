@@ -2,7 +2,7 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DBService{
-  var db,diseaseDB;
+  var db,diseaseDB,diseaseAnalyticsDB;
   DBService(){
     initDB();
   }
@@ -12,6 +12,7 @@ class DBService{
       var databasesPath = await getDatabasesPath();
       String path = join(databasesPath, 'data.db');
       String diseasePath = join(databasesPath, 'disease.db');
+      String diseaseAnalytics = join(databasesPath,'diseaseAnalytics.db');
 
       // Delete the database
       await deleteDatabase(path);
@@ -123,6 +124,14 @@ class DBService{
               print('inserted1: $id4');
             });
           });
+
+      diseaseAnalyticsDB = await openDatabase(diseaseAnalytics, version: 1,
+          onCreate: (Database db, int version) async {
+            // When creating the db, create the table
+            await db.execute(
+                'CREATE TABLE analytics (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, disease INTEGER (255));');
+          });
+
     }
     catch(e){
       print("DB Exception $e");
@@ -140,4 +149,19 @@ class DBService{
     print(list);
     return list;
   }
+
+  dynamic getDiseaseAnalytics()async{
+    List<Map> list = await diseaseAnalyticsDB.rawQuery('SELECT * FROM analytics');
+    print(list);
+    return list;
+  }
+
+  dynamic addDiseaseAnalytics(int? diseaseID)async{
+    await diseaseAnalyticsDB.transaction((txn) async {
+      int id1 = await txn.rawInsert(
+          'INSERT INTO analytics(id,disease) VALUES(NULL,$diseaseID)');
+      print('inserted1: $id1');
+    });
+  }
+
 }

@@ -1,3 +1,4 @@
+import 'package:agri_app/services/analyticsService.dart';
 import 'package:agri_app/services/dbservice.dart';
 import 'package:fab_circular_menu/fab_circular_menu.dart';
 import 'package:flutter/material.dart';
@@ -24,12 +25,15 @@ class _HomeState extends State<Home> {
   String? res;
   late DBService dbObject;
 
+  AnalyticsService analyticsService=AnalyticsService();
+
   @override
   void initState() {
     super.initState();
     loadModel();
     dbObject=DBService();
     loadSharedPreferences();
+    analyticsService.sendAnalytics();
   }
 
   void loadSharedPreferences()async{
@@ -218,6 +222,7 @@ class _HomeState extends State<Home> {
               else {
                 var result = await dbObject.getDisease(
                     recognitions[0]["index"] + 1);
+                await dbObject.addDiseaseAnalytics(recognitions[0]["index"] );
                 Navigator.pushNamed(context, "/crop", arguments: result[0]);
               }
             }
