@@ -1,6 +1,6 @@
 # agri_app
 
-Flutter application for detecting life diseases using on edge ML model
+Flutter application for detecting leaf diseases using on edge ML model
 
 ## Getting Started
 
