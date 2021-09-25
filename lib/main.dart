@@ -16,13 +16,38 @@ import 'package:agri_app/pages/userItems.dart';
 import 'package:agri_app/pages/userLands.dart';
 import 'package:agri_app/pages/userTools.dart';
 import 'package:flutter/material.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 void main() {
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   // This widget is the root of your application.
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+
+  @override
+  void initState() {
+    initOneSignal();
+    super.initState();
+  }
+
+  Future<void> initOneSignal()async {
+
+    OneSignal.shared.setLogLevel(OSLogLevel.verbose, OSLogLevel.none);
+
+    await OneSignal.shared.setAppId("9a34fce0-8e58-42af-b1bf-217caa61de6f");
+
+    // The promptForPushNotificationsWithUserResponse function will show the iOS push notification prompt. We recommend removing the following code and instead using an In-App Message to prompt for notification permission
+    OneSignal.shared.promptUserForPushNotificationPermission().then((accepted) {
+      print("Accepted permission: $accepted");
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

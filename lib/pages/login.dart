@@ -207,6 +207,7 @@ class _LoginState extends State<Login> {
                     await sharedPreferences.setString("phone", phone.text);
                     Navigator.pop(context);
                     Navigator.pop(context);
+                    Navigator.pushReplacementNamed(context, "/");
                   }
                   else if(result=="netError"){
                     Navigator.pop(context);
