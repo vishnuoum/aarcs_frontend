@@ -17,6 +17,7 @@ class DBService{
       // Delete the database
       await deleteDatabase(path);
       await deleteDatabase(diseasePath);
+      // await deleteDatabase(diseaseAnalytics);
       // open the database
       diseaseDB = await openDatabase(path, version: 1,
         onCreate: (Database db, int version) async {
@@ -129,7 +130,10 @@ class DBService{
           onCreate: (Database db, int version) async {
             // When creating the db, create the table
             await db.execute(
-                'CREATE TABLE analytics (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, disease INTEGER (255));');
+                'CREATE TABLE analytics (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, disease INTEGER);');
+
+            await db.execute(
+                'CREATE TABLE usage (date DATE PRIMARY KEY NOT NULL, minute REAL);');
           });
 
     }

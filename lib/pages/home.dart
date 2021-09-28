@@ -19,6 +19,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
 
   final GlobalKey<FabCircularMenuState> fabKey = GlobalKey();
+  DateTime start = DateTime.now();
 
   late SharedPreferences sharedPreferences;
   final ImagePicker _picker = ImagePicker();
@@ -34,7 +35,15 @@ class _HomeState extends State<Home> {
     dbObject=DBService();
     loadSharedPreferences();
     analyticsService.sendAnalytics();
+    analyticsService.addUsage();
   }
+
+  @override
+  void dispose() {
+    sharedPreferences.setString("usage", "10");
+    super.dispose();
+  }
+
 
   void loadSharedPreferences()async{
     sharedPreferences=await SharedPreferences.getInstance();
