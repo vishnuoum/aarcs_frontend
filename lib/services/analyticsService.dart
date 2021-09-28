@@ -42,29 +42,5 @@ class AnalyticsService{
     }
   }
 
-  void addUsage()async{
-    
-
-    try{
-      sharedPreferences = await SharedPreferences.getInstance();
-
-      if(sharedPreferences.containsKey("usage")) {
-        String? usage= sharedPreferences.getString("usage");
-        var databasesPath = await getDatabasesPath();
-        String diseaseAnalytics = join(databasesPath, 'diseaseAnalytics.db');
-
-        diseaseAnalyticsDB = await openDatabase(diseaseAnalytics, version: 1);
-
-        await diseaseAnalyticsDB.transaction((txn) async {
-          int id1 = await txn.rawInsert(
-              'INSERT INTO usage(date,minute) VALUES(NULL,$usage)');
-          print('inserted1: $id1');
-        });
-      }
-    }
-    catch(e){
-      print("Usage Analytics  add error: $e");
-    }
-  }
 
 }

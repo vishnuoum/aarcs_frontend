@@ -131,9 +131,6 @@ class DBService{
             // When creating the db, create the table
             await db.execute(
                 'CREATE TABLE analytics (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, disease INTEGER);');
-
-            await db.execute(
-                'CREATE TABLE usage (date DATE PRIMARY KEY NOT NULL, minute REAL);');
           });
 
     }

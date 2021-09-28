@@ -35,14 +35,8 @@ class _HomeState extends State<Home> {
     dbObject=DBService();
     loadSharedPreferences();
     analyticsService.sendAnalytics();
-    analyticsService.addUsage();
   }
 
-  @override
-  void dispose() {
-    sharedPreferences.setString("usage", "10");
-    super.dispose();
-  }
 
 
   void loadSharedPreferences()async{
