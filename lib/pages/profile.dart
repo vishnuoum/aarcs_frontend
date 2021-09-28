@@ -20,6 +20,7 @@ class _ProfileState extends State<Profile> {
   String? phone="";
   TextEditingController name=TextEditingController();
   TextEditingController phoneController=TextEditingController();
+  TextEditingController place=TextEditingController();
   String district="";
   LoginService loginService=LoginService();
 
@@ -117,6 +118,7 @@ class _ProfileState extends State<Profile> {
         phoneController.text=phone!;
         district=result[0]["district"];
         name.text=result[0]["name"];
+        place.text=result[0]["place"];
         showModalBottomSheet(enableDrag: true,isScrollControlled: true,shape: RoundedRectangleBorder(borderRadius: BorderRadius.only(topRight: Radius.circular(10),topLeft: Radius.circular(10))),context: context, builder: (BuildContext context){
           return StatefulBuilder(builder: (BuildContext context,setState)
           {
@@ -173,6 +175,26 @@ class _ProfileState extends State<Profile> {
                     ),
                   ),
                   SizedBox(height: 15,),
+                  Text("Place"),
+                  Container(
+                    margin: EdgeInsets.only(top: 10),
+                    padding: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.grey[200]
+                    ),
+                    child: TextField(
+                      textCapitalization: TextCapitalization.words,
+                      controller: place,
+                      focusNode: null,
+                      style: TextStyle(color: Colors.black),
+                      decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Place'
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 15,),
                   Text("District"),
                   Container(
                     margin: EdgeInsets.only(top: 10),
@@ -188,7 +210,7 @@ class _ProfileState extends State<Profile> {
                         'Kannur',
                         'Wayanad',
                         'Palakkad',
-                        'Malapuram',
+                        'Malappuram',
                         'Kozhikode',
                         'Thrissur',
                         'Ernakulam',
@@ -223,9 +245,10 @@ class _ProfileState extends State<Profile> {
                     showLoading(context);
                     if (name.text.length != 0 &&
                         phoneController.text.length != 0 &&
-                        district != "Select a Distirct") {
+                        district != "Select a Distirct" && place.text.length!=0) {
                       var res = await loginService.update(name: name.text,
                           phone: phoneController.text,
+                          place: place.text,
                           district: district,
                           id: result[0]["id"]);
                       if (res == "done") {
@@ -292,6 +315,10 @@ class _ProfileState extends State<Profile> {
           Align(alignment: Alignment.centerLeft,child: Text("Phone",style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 17),),),
           SizedBox(height: 10,),
           Padding(padding: EdgeInsets.only(left: 20),child: Text(phone!,style: TextStyle(fontSize: 20),),),
+          SizedBox(height: 30,),
+          Align(alignment: Alignment.centerLeft,child: Text("Place",style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 17),),),
+          SizedBox(height: 10,),
+          Padding(padding: EdgeInsets.only(left: 20),child: Text(result[0]["place"],style: TextStyle(fontSize: 20),),),
           SizedBox(height: 30,),
           Align(alignment: Alignment.centerLeft,child: Text("District",style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 17),),),
           SizedBox(height: 10,),

@@ -25,12 +25,12 @@ class LoginService{
 
 
 
-  Future<dynamic> signup({required String name,required String phone,required String district,required String password,required String otp})async{
+  Future<dynamic> signup({required String name,required String phone,required String district,required String password,required String otp,required String place})async{
     print(phone);
     print(password);
     try {
       Response response = await post(Uri.parse("http://10.0.2.2:3000/signup"),
-          body: {"name":name,"phone": phone, "district":district,"password": password,"otp":otp});
+          body: {"name":name,"phone": phone, "district":district,"password": password,"otp":otp,"place":place});
       if (response.body == "done") {
         return "done";
       }
@@ -48,11 +48,11 @@ class LoginService{
   }
 
 
-  Future<dynamic> update({required String name,required String phone,required String district,required String id})async{
+  Future<dynamic> update({required String name,required String phone,required String district,required String id,required String place})async{
 
     try {
       Response response = await post(Uri.parse("http://10.0.2.2:3000/editProfile"),
-          body: {"name":name,"phone": phone, "district":district,"id":id});
+          body: {"name":name,"phone": phone, "district":district,"id":id,"place":place});
       if (response.body == "done") {
         return "done";
       }

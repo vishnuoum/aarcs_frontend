@@ -15,7 +15,7 @@ class _SignupState extends State<Signup> {
   TextEditingController phone=TextEditingController();
   TextEditingController password1=TextEditingController();
   TextEditingController password2=TextEditingController();
-
+  TextEditingController place=TextEditingController();
 
 
 
@@ -117,8 +117,26 @@ class _SignupState extends State<Signup> {
                     borderRadius: BorderRadius.circular(10),
                     color: Colors.grey[200]
                 ),
+                child: TextField(
+                  textCapitalization: TextCapitalization.words,
+                  controller: place,
+                  focusNode: null,
+                  style: TextStyle(color: Colors.black),
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'Place'
+                  ),
+                ),
+              ),
+              SizedBox(height: 15,),
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 5,horizontal: 20),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.grey[200]
+                ),
                 child: DropdownButtonHideUnderline(
-                  child: DropdownButton(items: <String>['Select a District','Kasargod', 'Kannur', 'Wayanad', 'Palakkad','Malapuram','Kozhikode','Thrissur','Ernakulam','Idukki','Alappuzha','Kottayam','Pathanamthitta','Kollam','Thiruvananthapuram']
+                  child: DropdownButton(items: <String>['Select a District','Kasargod', 'Kannur', 'Wayanad', 'Palakkad','Malappuram','Kozhikode','Thrissur','Ernakulam','Idukki','Alappuzha','Kottayam','Pathanamthitta','Kollam','Thiruvananthapuram']
                       .map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
@@ -174,9 +192,9 @@ class _SignupState extends State<Signup> {
               ),
               SizedBox(height: 15,),
               TextButton(onPressed: ()async{
-                if(name.text.length!=0 && phone.text.length!=0 && district!="Select a district" && password1.text.length!=0 && password2.text.length!=0) {
+                if(name.text.length!=0 && phone.text.length!=0 && place.text.length!=0 && district!="Select a district" && password1.text.length!=0 && password2.text.length!=0) {
                   if (password1.text == password2.text) {
-                    Navigator.pushNamed(context, "/otp",arguments: {"name":name.text,"phone":phone.text,"district":district,"password":password1.text});
+                    Navigator.pushNamed(context, "/otp",arguments: {"name":name.text,"phone":phone.text,"district":district,"password":password1.text,"place":place.text});
                   }
                   else{
                     alertDialog("Passwords does not match!!");

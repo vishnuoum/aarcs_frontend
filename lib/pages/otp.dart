@@ -119,7 +119,7 @@ class _OTPState extends State<OTP> {
                   SizedBox(width: 10,),
                   Expanded(flex: 2,child: TextButton(onPressed: otp.length==6?()async{
                     showLoading(context);
-                    var result=await loginService.signup(name: widget.arguments["name"], phone: widget.arguments["phone"], district: widget.arguments["district"], password: widget.arguments["password"], otp: otp);
+                    var result=await loginService.signup(name: widget.arguments["name"], phone: widget.arguments["phone"], place: widget.arguments["place"], district: widget.arguments["district"], password: widget.arguments["password"], otp: otp);
                     if(result=="done"){
                       await sharedPreferences.setString("phone", widget.arguments["phone"]);
                       Navigator.pop(context);
