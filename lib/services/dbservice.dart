@@ -15,9 +15,17 @@ class DBService{
       String diseaseAnalytics = join(databasesPath,'diseaseAnalytics.db');
 
       // Delete the database
-      await deleteDatabase(path);
-      await deleteDatabase(diseasePath);
+      // await deleteDatabase(path);
+      // await deleteDatabase(diseasePath);
       // await deleteDatabase(diseaseAnalytics);
+
+      diseaseAnalyticsDB = await openDatabase(diseaseAnalytics, version: 1,
+          onCreate: (Database db, int version) async {
+            // When creating the db, create the table
+            await db.execute(
+                'CREATE TABLE analytics(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, disease INTEGER(255));');
+          });
+
       // open the database
       diseaseDB = await openDatabase(path, version: 1,
         onCreate: (Database db, int version) async {
@@ -126,12 +134,7 @@ class DBService{
             });
           });
 
-      diseaseAnalyticsDB = await openDatabase(diseaseAnalytics, version: 1,
-          onCreate: (Database db, int version) async {
-            // When creating the db, create the table
-            await db.execute(
-                'CREATE TABLE analytics (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, disease INTEGER);');
-          });
+
 
     }
     catch(e){
