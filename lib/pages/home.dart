@@ -38,9 +38,9 @@ class _HomeState extends State<Home> {
   }
 
 
+
   void loadSharedPreferences()async{
     sharedPreferences=await SharedPreferences.getInstance();
-    print(sharedPreferences.containsKey("usage"));
     setState(() {});
   }
 
