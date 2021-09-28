@@ -147,7 +147,7 @@ class _HomeState extends State<Home> {
               },
             ):Container(),
             checkLogin()?ListTile(
-              leading: Icon(Icons.settings),
+              leading: Icon(Icons.place),
               title: Text("Lend a Land"),
               onTap: (){
                 Navigator.pop(context);
