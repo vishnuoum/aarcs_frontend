@@ -6,7 +6,7 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
    <application
        android:resizeableActivity="false"
-        android:label="agri_app"
+        android:label="A.A.R.C.S."
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

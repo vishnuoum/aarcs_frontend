@@ -1,5 +1,7 @@
+import 'package:agri_app/icons/icon_icons.dart';
 import 'package:agri_app/services/analyticsService.dart';
 import 'package:agri_app/services/dbservice.dart';
+import 'package:agri_app/services/weatherService.dart';
 import 'package:fab_circular_menu/fab_circular_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -25,22 +27,35 @@ class _HomeState extends State<Home> {
   final ImagePicker _picker = ImagePicker();
   String? res;
   late DBService dbObject;
+  WeatherService weatherService=WeatherService();
+  String weather="";
 
   AnalyticsService analyticsService=AnalyticsService();
 
   @override
   void initState() {
     super.initState();
-    loadModel();
     dbObject=DBService();
     loadSharedPreferences();
     analyticsService.sendAnalytics();
+  }
+
+  String capitalize(String string) {
+    if (string.isEmpty) {
+      return string;
+    }
+
+    return string[0].toUpperCase() + string.substring(1);
   }
 
 
 
   void loadSharedPreferences()async{
     sharedPreferences=await SharedPreferences.getInstance();
+    var result=await weatherService.getWeather(phone: sharedPreferences.getString("phone"));
+    if(result!="error"){
+      weather="${(result["main"]["temp"]-273).toStringAsFixed(2)}°C  ${capitalize(result["weather"][0]["description"])}";
+    }
     setState(() {});
   }
 
@@ -54,10 +69,21 @@ class _HomeState extends State<Home> {
   }
 
 
-  void loadModel()async{
+  void loadLeafModel()async{
     res = await Tflite.loadModel(
         model: "assets/model.tflite",
         labels: "assets/labels.txt",
+        numThreads: 1, // defaults to 1
+        isAsset: true, // defaults to true, set to false to load resources outside assets
+        useGpuDelegate: false // defaults to false, set to true to use GPU delegate
+    );
+    print(res);
+  }
+
+  void loadSeedlingModel()async{
+    res = await Tflite.loadModel(
+        model: "assets/model_seedling.tflite",
+        labels: "assets/labels_seedling.txt",
         numThreads: 1, // defaults to 1
         isAsset: true, // defaults to true, set to false to load resources outside assets
         useGpuDelegate: false // defaults to false, set to true to use GPU delegate
@@ -94,6 +120,143 @@ class _HomeState extends State<Home> {
   }
 
 
+  Future<void> leafScan(BuildContext cont) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        loadLeafModel();
+        return AlertDialog(
+          title: Text('Scan Leaf'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text("Please select an option."),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Open Camera'),
+              onPressed: () async{
+                Navigator.of(context).pop();
+                print('Leaf Camera');
+                final XFile? image = await _picker.pickImage(source: ImageSource.camera);
+                try {
+                  print(image!.path);
+                  var recognitions = await Tflite.runModelOnImage(
+                    path: image.path,   // required
+                  );
+                  print(recognitions);
+                  if(recognitions![0]["label"].contains("healthy")){
+                    alertDialog("Your plant seems healthy!!");
+                  }
+                  else {
+                    var result = await dbObject.getDisease(
+                        recognitions[0]["index"] + 1);
+                    await dbObject.addDiseaseAnalytics(recognitions[0]["index"] );
+                    Navigator.pushNamed(cont, "/crop", arguments: result[0]);
+                  }
+                }
+                catch(e){
+                  print("Exception $e");
+                }
+              },
+            ),
+            TextButton(
+              child: Text('Open Gallery'),
+              onPressed: ()async {
+                Navigator.of(context).pop();
+                print('Leaf Gallery');
+                final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+                try {
+                  print(image!.path);
+                  var recognitions = await Tflite.runModelOnImage(
+                    path: image.path,   // required
+                  );
+                  print(recognitions);
+                  if(recognitions![0]["label"].contains("healthy")){
+                    alertDialog("Your plant seems healthy!!");
+                  }
+                  else{
+                    var result = await dbObject.getDisease(
+                        recognitions[0]["index"] + 1);
+                    Navigator.pushNamed(cont, "/crop", arguments: result[0]);
+                  }
+                }
+                catch(e){
+                  print("Exception $e");
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
+  Future<void> seedlingScan(BuildContext cont) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        loadSeedlingModel();
+        return AlertDialog(
+          title: Text('Scan Seedling'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text("Please select an option."),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Open Camera'),
+              onPressed: () async{
+                Navigator.of(context).pop();
+                print('Seedling Camera');
+                final XFile? image = await _picker.pickImage(source: ImageSource.camera);
+                try {
+                  print(image!.path);
+                  var recognitions = await Tflite.runModelOnImage(
+                    path: image.path,   // required
+                  );
+                  print(recognitions);
+                  alertDialog("$recognitions");
+                }
+                catch(e){
+                  print("Exception $e");
+                }
+              },
+            ),
+            TextButton(
+              child: Text('Open Gallery'),
+              onPressed: () async{
+                Navigator.of(context).pop();
+                print('Seedling Gallery');
+                final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+                try {
+                  print(image!.path);
+                  var recognitions = await Tflite.runModelOnImage(
+                    path: image.path,   // required
+                  );
+                  print(recognitions);
+                  alertDialog("$recognitions");
+                }
+                catch(e){
+                  print("Exception $e");
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -104,6 +267,12 @@ class _HomeState extends State<Home> {
         systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: Colors.green),
         backgroundColor: Colors.white,
         elevation: 0,
+        actions: [
+          Row(children: [
+            Text(weather,style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold),)
+          ],),
+          SizedBox(width: 10,)
+        ],
         iconTheme: IconThemeData(
           color: Colors.green,
         ),
@@ -121,12 +290,14 @@ class _HomeState extends State<Home> {
                 children: [
                   CircleAvatar(
                     child: Text("A",style: TextStyle(fontSize: 30),),
-                    radius: 35,
+                    radius: 32,
                     backgroundColor: Colors.white,
                     foregroundColor: Colors.green,
                   ),
-                  SizedBox(height: 15,),
-                  Text("Agri-App",style: TextStyle(color: Colors.white,fontSize: 20,),)
+                  SizedBox(height: 10,),
+                  Text("A.A.R.C.S.",style: TextStyle(color: Colors.white,fontSize: 20,),),
+                  SizedBox(height: 5,),
+                  Text("Advanced Agricultural Recommendation and Classification System",style: TextStyle(color: Colors.white,fontSize: 12),)
                 ],
               ),
             ),
@@ -187,52 +358,14 @@ class _HomeState extends State<Home> {
             Navigator.pushNamed(context, "/chat");
             fabKey.currentState!.close();
           }:null,),
-          IconButton(tooltip: "Pick From Gallery",color: Colors.white,splashColor: Colors.transparent,focusColor: Colors.transparent,highlightColor: Colors.transparent,icon: Icon(Icons.photo), onPressed: ()async {
-            print('');
-            final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-            try {
-              print(image!.path);
-              var recognitions = await Tflite.runModelOnImage(
-                  path: image.path,   // required
-              );
-              print(recognitions);
-              if(recognitions![0]["label"].contains("healthy")){
-                alertDialog("Your plant seems healthy!!");
-              }
-              else{
-                var result = await dbObject.getDisease(
-                    recognitions[0]["index"] + 1);
-                Navigator.pushNamed(context, "/crop", arguments: result[0]);
-              }
-            }
-            catch(e){
-              print("Exception $e");
-            }
+          IconButton(tooltip: "Crop Recommendation",icon: Icon(FlutterIcon.soil),color: Colors.white,splashColor: Colors.transparent,focusColor: Colors.transparent,highlightColor: Colors.transparent,onPressed: (){},),
+          IconButton(tooltip: "Scan Seedling",color: Colors.white,splashColor: Colors.transparent,focusColor: Colors.transparent,highlightColor: Colors.transparent,icon: Icon(FlutterIcon.plant), onPressed: ()async {
             fabKey.currentState!.close();
+            seedlingScan(context);
           }),
-          IconButton(tooltip: "Open Camera",color: Colors.white,splashColor: Colors.transparent,focusColor: Colors.transparent,highlightColor: Colors.transparent,icon: Icon(Icons.camera), onPressed: ()async {
-            print('Camera');
-            final XFile? image = await _picker.pickImage(source: ImageSource.camera);
-            try {
-              print(image!.path);
-              var recognitions = await Tflite.runModelOnImage(
-                path: image.path,   // required
-              );
-              print(recognitions);
-              if(recognitions![0]["label"].contains("healthy")){
-                alertDialog("Your plant seems healthy!!");
-              }
-              else {
-                var result = await dbObject.getDisease(
-                    recognitions[0]["index"] + 1);
-                await dbObject.addDiseaseAnalytics(recognitions[0]["index"] );
-                Navigator.pushNamed(context, "/crop", arguments: result[0]);
-              }
-            }
-            catch(e){
-              print("Exception $e");
-            }
+          IconButton(tooltip: "Scan Leaf",color: Colors.white,splashColor: Colors.transparent,focusColor: Colors.transparent,highlightColor: Colors.transparent,icon: Icon(FlutterIcon.leaf), onPressed: ()async {
             fabKey.currentState!.close();
+            leafScan(context);
           }),
         ]
       ),
@@ -246,7 +379,7 @@ class _HomeState extends State<Home> {
             SizedBox(height: 70,),
             Padding(
               padding: const EdgeInsets.only(left: 30.0),
-              child: Text("Agri App",style: TextStyle(color: Colors.green,fontSize: 40,fontWeight: FontWeight.bold),),
+              child: Text("A.A.R.C.S.",style: TextStyle(color: Colors.green,fontSize: 40,fontWeight: FontWeight.bold),),
             ),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 30,vertical: 5),
