@@ -10,6 +10,7 @@ import 'package:agri_app/pages/login.dart';
 import 'package:agri_app/pages/market.dart';
 import 'package:agri_app/pages/otp.dart';
 import 'package:agri_app/pages/profile.dart';
+import 'package:agri_app/pages/recommend.dart';
 import 'package:agri_app/pages/rent.dart';
 import 'package:agri_app/pages/signup.dart';
 import 'package:agri_app/pages/userItems.dart';
@@ -76,6 +77,7 @@ class _MyAppState extends State<MyApp> {
         "/userItems":(context) => UserItems(),
         "/userTools":(context) => UserTools(),
         "/userLands":(context) => UserLands(),
+        "/recommend":(context) => Recommend(),
       },
       initialRoute: "/",
     );

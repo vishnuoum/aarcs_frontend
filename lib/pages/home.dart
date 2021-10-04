@@ -355,10 +355,13 @@ class _HomeState extends State<Home> {
         children: <Widget>[
           IconButton(tooltip: "Community Chat",color: Colors.white,splashColor: Colors.transparent,focusColor: Colors.transparent,highlightColor: Colors.transparent,icon: Icon(Icons.message), onPressed: checkLogin()?() {
             print('Community Chat');
-            Navigator.pushNamed(context, "/chat");
             fabKey.currentState!.close();
+            Navigator.pushNamed(context, "/chat");
           }:null,),
-          IconButton(tooltip: "Crop Recommendation",icon: Icon(FlutterIcon.soil),color: Colors.white,splashColor: Colors.transparent,focusColor: Colors.transparent,highlightColor: Colors.transparent,onPressed: (){},),
+          IconButton(tooltip: "Crop Recommendation",icon: Icon(FlutterIcon.soil),color: Colors.white,splashColor: Colors.transparent,focusColor: Colors.transparent,highlightColor: Colors.transparent,onPressed: ()async{
+            fabKey.currentState!.close();
+            await Navigator.pushNamed(context, "/recommend");
+          },),
           IconButton(tooltip: "Scan Seedling",color: Colors.white,splashColor: Colors.transparent,focusColor: Colors.transparent,highlightColor: Colors.transparent,icon: Icon(FlutterIcon.plant), onPressed: ()async {
             fabKey.currentState!.close();
             seedlingScan(context);
