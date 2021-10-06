@@ -1,4 +1,6 @@
 
+import 'package:encrypt/encrypt.dart' as encrypt;
+
 import 'package:agri_app/services/chatService.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -14,12 +16,15 @@ class Chat extends StatefulWidget {
 
 class _ChatState extends State<Chat> {
 
+  final iv = encrypt.IV.fromLength(16);
+  final encryptor = encrypt.Encrypter(encrypt.AES(encrypt.Key.fromUtf8('5H66F46B5O1B6U723P75T7T821I12544')));
+
   late Socket socket;
   String date="0";
   String txt="Loading";
   int flag=0;
   late SharedPreferences sharedPreferences;
-  List messages=[];
+  dynamic messages=[];
   bool loading=true,connecting=true;
   TextEditingController msg=TextEditingController(text: "");
   ScrollController scrollController=ScrollController();
@@ -160,7 +165,7 @@ class _ChatState extends State<Chat> {
                                 padding: const EdgeInsets.only(bottom: 5.0),
                                 child: Text(messages[index]["sender"],style: TextStyle(fontSize: 11),),
                               ),
-                              Padding(padding: messages[index]["sender"]=="You"?EdgeInsets.only(right: 5):EdgeInsets.only(left: 5),child: Text(messages[index]["message"],style: TextStyle(fontSize: 16),),),
+                              Padding(padding: messages[index]["sender"]=="You"?EdgeInsets.only(right: 5):EdgeInsets.only(left: 5),child: Text(encryptor.decrypt64(messages[index]["message"], iv: iv),style: TextStyle(fontSize: 16),),),
                               Padding(padding: EdgeInsets.only(top: 5),child: Text( DateFormat('dd/MM/yyyy hh:mm a').format(DateTime.parse(messages[index]["dateTime"])),style: TextStyle(fontSize: 11),),)
                             ],
                           ),
@@ -216,12 +221,13 @@ class _ChatState extends State<Chat> {
                             onPressed: (){
                               print("Send");
                               setState(() {
-                                messages.add({"sender":"You","message":msg.text,"dateTime":"${DateTime.now()}"});
+                                print(encryptor.encrypt(msg.text, iv: iv));
+                                messages.add({"sender":"You","message":encryptor.encrypt(msg.text, iv: iv).base64,"dateTime":"${DateTime.now()}"});
                                 // Future.delayed(Duration(milliseconds: 20),(){
                                 //   scrollController.position.jumpTo(scrollController.position.maxScrollExtent);
                                 // });
                               });
-                              socket.emit('message', {"sender":phone,"message":msg.text});
+                              socket.emit('message', {"sender":phone,"message":encryptor.encrypt(msg.text, iv: iv).base64});
                               msg.clear();
                             },
                             style: TextButton.styleFrom(backgroundColor: Colors.green,shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),padding: EdgeInsets.all(12),primary: Colors.white),

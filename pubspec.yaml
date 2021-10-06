@@ -37,6 +37,7 @@ dependencies:
   socket_io_client: ^1.0.1
   intl: ^0.17.0
   onesignal_flutter: ^3.2.3
+  encrypt: 5.0.1
 
 
   # The following adds the Cupertino Icons font to your application.
