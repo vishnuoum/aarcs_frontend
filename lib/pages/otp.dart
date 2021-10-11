@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:agri_app/services/loginService.dart';
 import 'package:flutter/material.dart';
 import 'package:otp_text_field/otp_field.dart';
@@ -17,10 +19,13 @@ class _OTPState extends State<OTP> {
 
   LoginService loginService=LoginService();
   String otp="";
+  int count=60;
+  late Timer time;
   late SharedPreferences sharedPreferences;
 
   @override
   void initState() {
+    timer();
     loginService.otp(phone:widget.arguments["phone"]);
     print(widget.arguments);
     loadSharedPreferences();
@@ -29,6 +34,18 @@ class _OTPState extends State<OTP> {
 
   void loadSharedPreferences()async{
     sharedPreferences=await SharedPreferences.getInstance();
+  }
+
+  void timer({countTimer=60})async{
+
+    if(countTimer>=0) {
+      time=Timer(Duration(seconds: 1), () {
+        setState(() {
+          count = countTimer;
+        });
+        timer(countTimer: countTimer - 1);
+      });
+    }
   }
 
   Future<void> alertDialog(var text) async {
@@ -78,6 +95,12 @@ class _OTPState extends State<OTP> {
     });
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    time.cancel();
+  }
+
 
 
   @override
@@ -115,7 +138,10 @@ class _OTPState extends State<OTP> {
               SizedBox(height: 30,),
               Row(
                 children: [
-                  Expanded(flex: 2,child: TextButton(onPressed: null, child: Text("Resend"),style: TextButton.styleFrom(backgroundColor: Colors.green,primary: Colors.white,padding: EdgeInsets.all(18),shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50))),)),
+                  Expanded(flex: 2,child: TextButton(onPressed: count!=0? null:()async{
+                    loginService.otp(phone:widget.arguments["phone"]);
+                    timer();
+                  }, child: Text("Resend ${count==0?"":count}"),style: TextButton.styleFrom(backgroundColor: Colors.green,primary: Colors.white,padding: EdgeInsets.all(18),shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50))),)),
                   SizedBox(width: 10,),
                   Expanded(flex: 2,child: TextButton(onPressed: otp.length==6?()async{
                     showLoading(context);
