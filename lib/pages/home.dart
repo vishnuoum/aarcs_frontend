@@ -302,6 +302,14 @@ class _HomeState extends State<Home> {
               ),
             ),
             checkLogin()?ListTile(
+              leading: Icon(Icons.calendar_today_rounded),
+              title: Text("Event Scheduler"),
+              onTap: (){
+                Navigator.pop(context);
+                Navigator.pushNamed(context, "/calendar");
+              },
+            ):Container(),
+            checkLogin()?ListTile(
               leading: Icon(Icons.shopping_cart_rounded),
               title: Text("Market Place"),
               onTap: (){

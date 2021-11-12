@@ -2,6 +2,7 @@ import 'package:agri_app/pages/Crop.dart';
 import 'package:agri_app/pages/addNewCrop.dart';
 import 'package:agri_app/pages/addNewLand.dart';
 import 'package:agri_app/pages/addNewTool.dart';
+import 'package:agri_app/pages/calendar.dart';
 import 'package:agri_app/pages/changePassword.dart';
 import 'package:agri_app/pages/chat.dart';
 import 'package:agri_app/pages/home.dart';
@@ -78,6 +79,7 @@ class _MyAppState extends State<MyApp> {
         "/userTools":(context) => UserTools(),
         "/userLands":(context) => UserLands(),
         "/recommend":(context) => Recommend(),
+        "/calendar":(context) => Calendar(),
       },
       initialRoute: "/",
     );
