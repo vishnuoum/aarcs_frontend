@@ -1,5 +1,6 @@
 import 'package:agri_app/pages/Crop.dart';
 import 'package:agri_app/pages/addNewCrop.dart';
+import 'package:agri_app/pages/addNewEvent.dart';
 import 'package:agri_app/pages/addNewLand.dart';
 import 'package:agri_app/pages/addNewTool.dart';
 import 'package:agri_app/pages/calendar.dart';
@@ -80,6 +81,7 @@ class _MyAppState extends State<MyApp> {
         "/userLands":(context) => UserLands(),
         "/recommend":(context) => Recommend(),
         "/calendar":(context) => Calendar(),
+        "/addNewEvent":(context) => AddNewEvent(),
       },
       initialRoute: "/",
     );

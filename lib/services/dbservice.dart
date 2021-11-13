@@ -132,6 +132,9 @@ class DBService{
                   'INSERT INTO variety(id,name,details,link) VALUES(NULL, "Corn","\tMaize (/meɪz/ MAYZ; Zea mays subsp. mays, from Spanish: maíz after Taino: mahiz), also known as corn (North American and Australian English), is a cereal grain first domesticated by indigenous peoples in southern Mexico about 10,000 years ago.\n\n \tThe leafy stalk of the plant produces pollen inflorescences and separate ovuliferous inflorescences called ears that yield kernels or seeds, which are fruits. Maize has become a staple food in many parts of the world, with the total production of maize surpassing that of wheat or rice. In addition to being consumed directly by humans (often in the form of masa), maize is also used for corn ethanol, animal feed and other maize products, such as corn starch and corn syrup. The six major types of maize are dent corn, flint corn, pod corn, popcorn, flour corn, and sweet corn. Sugar-rich varieties called sweet corn are usually grown for human consumption as kernels, while field corn varieties are used for animal feed, various corn-based human food uses (including grinding into cornmeal or masa, pressing into corn oil, and fermentation and distillation into alcoholic beverages like bourbon whiskey), and as chemical feedstocks. Maize is also used in making ethanol and other biofuels.","https://en.wikipedia.org/wiki/Maize")');
               print('inserted1: $id4');
             });
+
+            await db.execute(
+                'CREATE TABLE events (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, eventName VARCHAR (255), fromTime VARCHAR (255),toTime VARCHAR (255));');
           });
 
 
@@ -166,6 +169,26 @@ class DBService{
           'INSERT INTO analytics(id,disease) VALUES(NULL,$diseaseID)');
       print('inserted1: $id1');
     });
+  }
+
+  dynamic addEvent({required String eventName,required DateTime? fromTime,required DateTime? toTime})async{
+    try {
+      await db.transaction((txn) async {
+        int id = await txn.rawInsert(
+            'Insert into events(id,eventName,fromTime,toTime) VALUES(NULL,"$eventName","${fromTime
+                .toString()}","${toTime.toString()}")');
+        print('insert id:$id');
+      });
+    }
+    catch(e){
+      print(e);
+    }
+  }
+
+  dynamic getEvents() async{
+    List<Map> list = await db.rawQuery('SELECT * FROM events');
+    print(list);
+    return list;
   }
 
 }

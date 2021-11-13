@@ -306,7 +306,7 @@ class _HomeState extends State<Home> {
               title: Text("Event Scheduler"),
               onTap: (){
                 Navigator.pop(context);
-                Navigator.pushNamed(context, "/calendar");
+                Navigator.pushNamed(context, "/calendar",arguments: {"db":dbObject});
               },
             ):Container(),
             checkLogin()?ListTile(

@@ -9,10 +9,36 @@ class Calendar extends StatefulWidget {
 }
 
 class _CalendarState extends State<Calendar> {
+
   CalendarController calendarController=CalendarController();
+  var db;
+  late CalendarDataSource datasource;
+  Map arg={};
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    datasource.dispose();
+    super.dispose();
+  }
+
 
   @override
   Widget build(BuildContext context) {
+    if(arg.length==0) {
+      arg = ModalRoute
+          .of(context)!
+          .settings
+          .arguments as Map;
+      db = arg["db"];
+      datasource=MeetingDataSource(_getDataSource());
+    }
+
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Event Scheduler"),
@@ -32,12 +58,13 @@ class _CalendarState extends State<Calendar> {
               selectionDecoration: BoxDecoration(
                   border: Border.all(color: Colors.green,width: 2)
               ),
-              dataSource: MeetingDataSource(_getDataSource()),
+              dataSource: datasource,
               monthViewSettings: const MonthViewSettings(
-                  appointmentDisplayMode: MonthAppointmentDisplayMode.indicator),
+                  appointmentDisplayMode: MonthAppointmentDisplayMode.appointment),
               onTap: (calendarDetails){
                 print(calendarDetails.appointments);
                 calendarController.view=CalendarView.day;
+                setState(() {});
                 // calendarController.displayDate=DateTime.now();
               },
             ),
@@ -48,10 +75,27 @@ class _CalendarState extends State<Calendar> {
               tooltip: "Change Calendar view",
               iconSize: 28,
             ),top: 5,right: 8,),
+            Positioned(child: IconButton(onPressed: (){
+              setState(() {
+                datasource=MeetingDataSource(_getDataSource());
+              });
+              print(datasource);
+              datasource.notifyListeners(CalendarDataSourceAction.add,_getDataSource());
+            },icon: Icon(Icons.refresh,color: Colors.green,),
+              tooltip: "Refresh",
+              iconSize: 30,
+            ),top: 5,right: 60,),
           ],
         ),
       floatingActionButton: FloatingActionButton(
-        onPressed: (){},
+        onPressed: ()async{
+          await Navigator.pushNamed(context, "/addNewEvent");
+          setState(() {
+            datasource=MeetingDataSource(_getDataSource());
+          });
+          print(datasource);
+          datasource.notifyListeners(CalendarDataSourceAction.add,_getDataSource());
+        },
         tooltip: "Add new Event",
         child: Icon(Icons.add,size: 30),
       ),
@@ -60,12 +104,13 @@ class _CalendarState extends State<Calendar> {
 
   List<Meeting> _getDataSource() {
     final List<Meeting> meetings = <Meeting>[];
-    final DateTime today = DateTime.now();
-    final DateTime startTime =
-    DateTime(today.year, today.month, today.day, 9, 0, 0);
-    final DateTime endTime = startTime.add(const Duration(hours: 2));
+    db.getEvents().then((events){
+      for(int i=0;i<events.length;i++){
+        meetings.add(Meeting(eventName: events[i]["eventName"], from: DateTime.parse(events[i]["fromTime"]), to: DateTime.parse(events[i]["toTime"])));
+      }
+    });
     // meetings.add(Meeting(
-    //     'Conference', startTime, endTime, const Color(0xFF0F8644), false));
+    //     eventName: 'Conference', from: startTime, to: endTime));
     return meetings;
   }
 }
@@ -121,7 +166,7 @@ class MeetingDataSource extends CalendarDataSource {
 /// information about the event data which will be rendered in calendar.
 class Meeting {
   /// Creates a meeting class with required details.
-  Meeting(this.eventName, this.from, this.to, this.background, this.isAllDay);
+  Meeting({required this.eventName, required this.from, required this.to, this.background=const Color(0xFF0F8644), this.isAllDay=false});
 
   /// Event name which is equivalent to subject property of [Appointment].
   String eventName;
