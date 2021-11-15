@@ -61,9 +61,19 @@ class _CalendarState extends State<Calendar> {
               dataSource: datasource,
               monthViewSettings: const MonthViewSettings(
                   appointmentDisplayMode: MonthAppointmentDisplayMode.appointment),
-              onTap: (calendarDetails){
-                print(calendarDetails.appointments);
-                calendarController.view=CalendarView.day;
+              onTap: (calendarDetails)async{
+                if(calendarController.view==CalendarView.month){
+                  calendarController.view=CalendarView.day;
+                }
+                else if(calendarController.view==CalendarView.day && (calendarDetails.appointments![0] is Meeting)){
+                  print(calendarDetails.appointments![0].id);
+                  await Navigator.pushNamed(context, "/editEvent",arguments: {"appointment":calendarDetails.appointments![0],"db":db});
+                  setState(() {
+                    datasource=MeetingDataSource(_getDataSource());
+                  });
+                  // print(datasource);
+                  datasource.notifyListeners(CalendarDataSourceAction.add,_getDataSource());
+                }
                 setState(() {});
                 // calendarController.displayDate=DateTime.now();
               },
@@ -79,7 +89,7 @@ class _CalendarState extends State<Calendar> {
               setState(() {
                 datasource=MeetingDataSource(_getDataSource());
               });
-              print(datasource);
+              // print(datasource);
               datasource.notifyListeners(CalendarDataSourceAction.add,_getDataSource());
             },icon: Icon(Icons.refresh,color: Colors.green,),
               tooltip: "Refresh",
@@ -93,7 +103,7 @@ class _CalendarState extends State<Calendar> {
           setState(() {
             datasource=MeetingDataSource(_getDataSource());
           });
-          print(datasource);
+          // print(datasource);
           datasource.notifyListeners(CalendarDataSourceAction.add,_getDataSource());
         },
         tooltip: "Add new Event",
@@ -106,7 +116,7 @@ class _CalendarState extends State<Calendar> {
     final List<Meeting> meetings = <Meeting>[];
     db.getEvents().then((events){
       for(int i=0;i<events.length;i++){
-        meetings.add(Meeting(eventName: events[i]["eventName"], from: DateTime.parse(events[i]["fromTime"]), to: DateTime.parse(events[i]["toTime"])));
+        meetings.add(Meeting(id: events[i]["id"],eventName: events[i]["eventName"], from: DateTime.parse(events[i]["fromTime"]), to: DateTime.parse(events[i]["toTime"])));
       }
     });
     // meetings.add(Meeting(
@@ -166,8 +176,9 @@ class MeetingDataSource extends CalendarDataSource {
 /// information about the event data which will be rendered in calendar.
 class Meeting {
   /// Creates a meeting class with required details.
-  Meeting({required this.eventName, required this.from, required this.to, this.background=const Color(0xFF0F8644), this.isAllDay=false});
+  Meeting({required this.id,required this.eventName, required this.from, required this.to, this.background=const Color(0xFF0F8644), this.isAllDay=false});
 
+  int id;
   /// Event name which is equivalent to subject property of [Appointment].
   String eventName;
 

@@ -6,6 +6,7 @@ import 'package:agri_app/pages/addNewTool.dart';
 import 'package:agri_app/pages/calendar.dart';
 import 'package:agri_app/pages/changePassword.dart';
 import 'package:agri_app/pages/chat.dart';
+import 'package:agri_app/pages/editEvent.dart';
 import 'package:agri_app/pages/home.dart';
 import 'package:agri_app/pages/land.dart';
 import 'package:agri_app/pages/login.dart';
@@ -82,6 +83,7 @@ class _MyAppState extends State<MyApp> {
         "/recommend":(context) => Recommend(),
         "/calendar":(context) => Calendar(),
         "/addNewEvent":(context) => AddNewEvent(),
+        "/editEvent":(context) => EditEvent(),
       },
       initialRoute: "/",
     );

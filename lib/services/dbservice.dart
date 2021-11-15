@@ -185,9 +185,35 @@ class DBService{
     }
   }
 
+  dynamic editEvent({required int id,required String eventName,required DateTime? fromTime,required DateTime? toTime})async{
+    try {
+      await db.transaction((txn) async {
+        int count = await txn.rawUpdate(
+            'Update events set eventName="$eventName", fromTime="${fromTime.toString()}", toTime="${toTime.toString()}" where id=$id');
+        print('update count:$count');
+      });
+    }
+    catch(e){
+      print(e);
+    }
+  }
+
+  dynamic removeEvent({required int id})async{
+    try {
+      await db.transaction((txn) async {
+        int count = await txn.rawDelete(
+            'Delete from events where id=$id');
+        print('delete count:$count');
+      });
+    }
+    catch(e){
+      print(e);
+    }
+  }
+
   dynamic getEvents() async{
     List<Map> list = await db.rawQuery('SELECT * FROM events');
-    print(list);
+    // print(list);
     return list;
   }
 
