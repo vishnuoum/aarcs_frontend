@@ -1,3 +1,4 @@
+import 'package:agri_app/services/decisionTree.dart';
 import 'package:agri_app/services/recommendationService.dart';
 import 'package:flutter/material.dart';
 
@@ -9,6 +10,8 @@ class Recommend extends StatefulWidget {
 }
 
 class _RecommendState extends State<Recommend> {
+
+
 
   TextEditingController N=TextEditingController();
   TextEditingController K=TextEditingController();
@@ -224,7 +227,9 @@ class _RecommendState extends State<Recommend> {
               FocusScope.of(context).unfocus();
               if(N.text.length!=0 && P.text.length!=0 && K.text.length!=0 && temperature.text.length!=0 && rainfall.text.length!=0 && ph.text.length!=0 && double.parse(ph.text)>=0 &&  double.parse(ph.text)<=14 && humidity.text.length!=0) {
                 showLoading(context);
-                var result=await recommendationService.recommend(N: N.text, K: K.text, P: P.text, temperature: temperature.text, rainfall: rainfall.text, ph: ph.text, humidity: humidity.text);
+                // var result=await recommendationService.recommend(N: N.text, K: K.text, P: P.text, temperature: temperature.text, rainfall: rainfall.text, ph: ph.text, humidity: humidity.text);
+                DecisionTreeClassifier DT=DecisionTreeClassifier();
+                var result=await DT.predict(features: [N.text,K.text,P.text,temperature.text,humidity.text,ph.text,rainfall.text]);
                 Navigator.pop(context);
                 if(result=="error"){
                   alertDialog("Alert", 'Something went wrong. Please try again later.');
