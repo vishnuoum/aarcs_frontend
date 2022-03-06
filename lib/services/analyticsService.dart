@@ -25,7 +25,7 @@ class AnalyticsService{
       print(list);
       if(list.isNotEmpty) {
         Response response = await post(
-            Uri.parse("http://10.0.2.2:3000/analyticsInfo"), body: {
+            Uri.parse("http://192.168.18.2:3000/analyticsInfo"), body: {
           "diseaseInfo": jsonEncode(list),
           "phone": sharedPreferences.getString("phone")
         });

@@ -46,7 +46,7 @@ class _ChatState extends State<Chat> {
 
   void init()async{
     try {
-      socket = io('http://10.0.2.2:3000', <String, dynamic>{
+      socket = io('http://192.168.18.2:3000', <String, dynamic>{
         'transports': ['websocket'],
         'autoConnect': false,
       });
