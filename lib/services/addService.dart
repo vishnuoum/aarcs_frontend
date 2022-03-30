@@ -5,7 +5,7 @@ class AddService{
 
   Future<dynamic> addItem({required String name,required String price,required String place,required String district,required String? phone,required String path})async{
     try{
-      var request = new MultipartRequest("POST", Uri.parse("http://192.168.18.2:3000/addItem"));
+      var request = new MultipartRequest("POST", Uri.parse("http://192.168.18.46:3000/addItem"));
       request.fields['name'] = name;
       request.fields['price']=price;
       request.fields["place"]=place;
@@ -33,7 +33,7 @@ class AddService{
 
   Future<dynamic> addTool({required String name,required String price,required String place,required String district,required String? phone,required String path})async{
     try{
-      var request = new MultipartRequest("POST", Uri.parse("http://192.168.18.2:3000/addTool"));
+      var request = new MultipartRequest("POST", Uri.parse("http://192.168.18.46:3000/addTool"));
       request.fields['name'] = name;
       request.fields['price']=price;
       request.fields["place"]=place;
@@ -61,7 +61,7 @@ class AddService{
 
   Future<dynamic> addLand({required String name,required String price,required String place,required String district,required String? phone,required String path})async{
     try{
-      var request = new MultipartRequest("POST", Uri.parse("http://192.168.18.2:3000/addLand"));
+      var request = new MultipartRequest("POST", Uri.parse("http://192.168.18.46:3000/addLand"));
       request.fields['name'] = name;
       request.fields['price']=price;
       request.fields["place"]=place;

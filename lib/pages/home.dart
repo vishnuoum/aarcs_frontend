@@ -223,7 +223,11 @@ class _HomeState extends State<Home> {
                   var recognitions = await Tflite.runModelOnImage(
                     path: image.path,   // required
                   );
-                  print(recognitions);
+                  if(recognitions![0]["confidence"]<0.8){
+                    alertDialog("Could not find seedling in the image.");
+                    return;
+                  }
+                  print(recognitions[0]);
                   alertDialog("$recognitions");
                 }
                 catch(e){
@@ -242,6 +246,10 @@ class _HomeState extends State<Home> {
                   var recognitions = await Tflite.runModelOnImage(
                     path: image.path,   // required
                   );
+                  if(recognitions![0]["confidence"]<0.8){
+                    alertDialog("Could not find seedling in the image.");
+                    return;
+                  }
                   print(recognitions);
                   alertDialog("$recognitions");
                 }

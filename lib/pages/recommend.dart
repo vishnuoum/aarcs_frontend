@@ -110,7 +110,7 @@ class _RecommendState extends State<Recommend> {
                 style: TextStyle(color: Colors.black),
                 decoration: InputDecoration(
                     border: InputBorder.none,
-                    hintText: 'Nitrogen content in soil'
+                    hintText: 'Nitrogen content in soil (Kg/ha)'
                 ),
               ),
             ),
@@ -128,7 +128,7 @@ class _RecommendState extends State<Recommend> {
                 style: TextStyle(color: Colors.black),
                 decoration: InputDecoration(
                     border: InputBorder.none,
-                    hintText: 'Potassium content in soil'
+                    hintText: 'Potassium content in soil (Kg/ha)'
                 ),
               ),
             ),
@@ -146,7 +146,7 @@ class _RecommendState extends State<Recommend> {
                 style: TextStyle(color: Colors.black),
                 decoration: InputDecoration(
                     border: InputBorder.none,
-                    hintText: 'Phosphorus content in soil'
+                    hintText: 'Phosphorus content in soil (Kg/ha)'
                 ),
               ),
             ),
@@ -182,7 +182,7 @@ class _RecommendState extends State<Recommend> {
                 style: TextStyle(color: Colors.black),
                 decoration: InputDecoration(
                     border: InputBorder.none,
-                    hintText: 'Rainfall'
+                    hintText: 'Average Rainfall (mm)'
                 ),
               ),
             ),
@@ -218,14 +218,34 @@ class _RecommendState extends State<Recommend> {
                 style: TextStyle(color: Colors.black),
                 decoration: InputDecoration(
                     border: InputBorder.none,
-                    hintText: 'Humidity'
+                    hintText: 'Humidity %'
                 ),
               ),
             ),
             SizedBox(height: 15,),
             TextButton(onPressed: ()async{
               FocusScope.of(context).unfocus();
-              if(N.text.length!=0 && P.text.length!=0 && K.text.length!=0 && temperature.text.length!=0 && rainfall.text.length!=0 && ph.text.length!=0 && double.parse(ph.text)>=0 &&  double.parse(ph.text)<=14 && humidity.text.length!=0) {
+              if(N.text.length!=0 && P.text.length!=0 && K.text.length!=0 && temperature.text.length!=0 && rainfall.text.length!=0 && ph.text.length!=0 && humidity.text.length!=0) {
+                if(!(double.parse(N.text)>=0 &&  double.parse(N.text)<=150)){
+                  alertDialog("Alert", "Please check your nitrogen content value. As for the study it ranges between 0-150 Kg/ha");
+                  return;
+                }
+                if(!(double.parse(P.text)>=0 &&  double.parse(P.text)<=150)){
+                  alertDialog("Alert", "Please check your phosphorus content value. As for the study it ranges between 0-150 Kg/ha");
+                  return;
+                }
+                if(!(double.parse(rainfall.text)>=200)){
+                  alertDialog("Alert", "Please check your rainfall value. As per the study, in India lowest average annual rainfall in 200mm");
+                  return;
+                }
+                if(!(double.parse(humidity.text)>=0 && double.parse(humidity.text)<=100)){
+                  alertDialog("Alert", "Please check your humidity value.");
+                  return;
+                }
+                if(!(double.parse(ph.text)>=0 &&  double.parse(ph.text)<=14)){
+                  alertDialog("Alert", "Please fill the Ph value correctly. pH value ranges from 0 - 14.");
+                  return;
+                }
                 showLoading(context);
                 // var result=await recommendationService.recommend(N: N.text, K: K.text, P: P.text, temperature: temperature.text, rainfall: rainfall.text, ph: ph.text, humidity: humidity.text);
                 DecisionTreeClassifier DT=DecisionTreeClassifier();
