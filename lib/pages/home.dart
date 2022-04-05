@@ -1,3 +1,6 @@
+import 'dart:io';
+import 'dart:math';
+
 import 'package:agri_app/icons/icon_icons.dart';
 import 'package:agri_app/services/analyticsService.dart';
 import 'package:agri_app/services/dbservice.dart';
@@ -7,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:palette_generator/palette_generator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tflite/tflite.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -31,6 +35,7 @@ class _HomeState extends State<Home> {
   String weather="";
 
   AnalyticsService analyticsService=AnalyticsService();
+  late PaletteGenerator paletteGenerator;
 
   @override
   void initState() {
@@ -40,12 +45,29 @@ class _HomeState extends State<Home> {
     analyticsService.sendAnalytics();
   }
 
+  double compareColor(Color color){
+    return (sqrt(pow(color.red-45,2)+ pow(color.green-90,2)+ pow(color.blue-39,2))/441.672)*100;
+  }
+
   String capitalize(String string) {
     if (string.isEmpty) {
       return string;
     }
 
     return string[0].toUpperCase() + string.substring(1);
+  }
+
+  Future<dynamic> getColorPalette(String path)async
+  {
+    try {
+      paletteGenerator = await PaletteGenerator.fromImageProvider(
+        Image(image: FileImage(File(path))).image,
+      );
+      return paletteGenerator;
+    }
+    catch(e){
+      return "";
+    }
   }
 
 
@@ -148,10 +170,22 @@ class _HomeState extends State<Home> {
                     path: image.path,   // required
                   );
                   print(recognitions);
-                  if(recognitions![0]["label"].contains("healthy")){
+                  if(recognitions![0]["confidence"]<0.85){
+                    alertDialog("Could not find the leaf in the image.");
+                    return;
+                  }
+                  if(recognitions[0]["label"].contains("healthy")){
                     alertDialog("Your plant seems healthy!!");
                   }
                   else {
+                    PaletteGenerator color=await getColorPalette(image.path.substring(1));
+                    print(color.dominantColor!.color);
+                    double cmp=compareColor(color.dominantColor!.color);
+                    print(cmp);
+                    if(cmp.toInt()>25){
+                      alertDialog("Could not find the leaf in the image.");
+                      return;
+                    }
                     var result = await dbObject.getDisease(
                         recognitions[0]["index"] + 1);
                     await dbObject.addDiseaseAnalytics(recognitions[0]["index"] );
@@ -175,10 +209,22 @@ class _HomeState extends State<Home> {
                     path: image.path,   // required
                   );
                   print(recognitions);
-                  if(recognitions![0]["label"].contains("healthy")){
+                  if(recognitions![0]["confidence"]<0.85){
+                    alertDialog("Could not find the leaf in the image.");
+                    return;
+                  }
+                  if(recognitions[0]["label"].contains("healthy")){
                     alertDialog("Your plant seems healthy!!");
                   }
                   else{
+                    PaletteGenerator color=await getColorPalette(image.path.substring(1));
+                    print(color.dominantColor!.color);
+                    double cmp=compareColor(color.dominantColor!.color);
+                    print(cmp);
+                    if(cmp.toInt()>25){
+                      alertDialog("Could not find the leaf in the image.");
+                      return;
+                    }
                     var result = await dbObject.getDisease(
                         recognitions[0]["index"] + 1);
                     Navigator.pushNamed(cont, "/crop", arguments: result[0]);
@@ -223,7 +269,7 @@ class _HomeState extends State<Home> {
                   var recognitions = await Tflite.runModelOnImage(
                     path: image.path,   // required
                   );
-                  if(recognitions![0]["confidence"]<0.8){
+                  if(recognitions![0]["confidence"]<0.85){
                     alertDialog("Could not find seedling in the image.");
                     return;
                   }
@@ -246,7 +292,7 @@ class _HomeState extends State<Home> {
                   var recognitions = await Tflite.runModelOnImage(
                     path: image.path,   // required
                   );
-                  if(recognitions![0]["confidence"]<0.8){
+                  if(recognitions![0]["confidence"]<0.85){
                     alertDialog("Could not find seedling in the image.");
                     return;
                   }
