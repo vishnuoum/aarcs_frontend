@@ -21,6 +21,7 @@ class _RecommendState extends State<Recommend> {
   TextEditingController rainfall=TextEditingController();
   TextEditingController ph=TextEditingController();
   RecommendationService recommendationService=RecommendationService();
+  String cropName= "Select a crop for checking (optional)";
 
   String capitalize(String string) {
     if (string.isEmpty) {
@@ -223,6 +224,32 @@ class _RecommendState extends State<Recommend> {
               ),
             ),
             SizedBox(height: 15,),
+            Container(
+              padding: EdgeInsets.symmetric(vertical: 5,horizontal: 20),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Colors.grey[200]
+              ),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton(items: <String>['Select a crop for checking (optional)','Apple', 'Banana', 'Blackgram', 'Chickpea', 'Coconut', 'Coffee', 'Cotton', 'Grapes', 'Jute', 'Kidneybeans', 'Lentil', 'Maize', 'Mango', 'Mothbeans', 'Mungbean', 'Muskmelon', 'Orange', 'Papaya', 'Pigeonpeas', 'Pomegranate', 'Rice', 'Watermelon']
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value,style: TextStyle(color:value=="Select a crop for checking (optional)"?Colors.grey[700]:Colors.black),),
+                  );
+                }).toList(),
+                  isExpanded: true,
+                  underline: null,
+                  value: cropName,
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      cropName = newValue!;
+                    });
+                  },
+                ),
+              ),
+            ),
+            SizedBox(height: 15,),
             TextButton(onPressed: ()async{
               FocusScope.of(context).unfocus();
               if(N.text.length!=0 && P.text.length!=0 && K.text.length!=0 && temperature.text.length!=0 && rainfall.text.length!=0 && ph.text.length!=0 && humidity.text.length!=0) {
@@ -260,7 +287,17 @@ class _RecommendState extends State<Recommend> {
                 else{
                   N.clear();K.clear();P.clear();temperature.clear();
                   ph.clear();humidity.clear();rainfall.clear();
-                  alertDialog("Result", "Recommended Crop for your soil composition is: ${capitalize(result)}");
+                  if(cropName=="Select a crop for checking (optional)"){
+                    alertDialog("Result", "Recommended Crop for your soil composition is: ${capitalize(result)}");
+                  }
+                  else if(capitalize(result)==cropName){
+                    alertDialog("Result", "Selected crop will be suitable for the given soil composition.");
+                  }
+                  else{
+                    alertDialog("Result", "Selected crop is not suitable for the given soil composition. Recommended Crop for your soil composition is: ${capitalize(result)}");
+                  }
+                  cropName="Select a crop for checking (optional)";
+                  setState(() {});
                 }
               }
               else{
