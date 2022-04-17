@@ -400,7 +400,7 @@ class _HomeState extends State<Home> {
               title: Text("Logout"),
               onTap: ()async{
                 Navigator.pop(context);
-                sharedPreferences.remove("phone");
+                await sharedPreferences.remove("phone");
                 setState(() {});
                },
             ):Container(),
