@@ -79,6 +79,7 @@ class _MarketPlaceState extends State<MarketPlace> {
         return true;
       },
       child: Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: Colors.white,
           iconTheme: IconThemeData(

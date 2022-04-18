@@ -7,13 +7,14 @@ import 'package:agri_app/pages/calendar.dart';
 import 'package:agri_app/pages/changePassword.dart';
 import 'package:agri_app/pages/chat.dart';
 import 'package:agri_app/pages/editEvent.dart';
-import 'package:agri_app/pages/home.dart';
+import 'package:agri_app/pages/mainHome.dart';
 import 'package:agri_app/pages/land.dart';
 import 'package:agri_app/pages/login.dart';
 import 'package:agri_app/pages/market.dart';
 import 'package:agri_app/pages/otp.dart';
 import 'package:agri_app/pages/profile.dart';
 import 'package:agri_app/pages/recommend.dart';
+import 'package:agri_app/pages/recommended.dart';
 import 'package:agri_app/pages/rent.dart';
 import 'package:agri_app/pages/signup.dart';
 import 'package:agri_app/pages/userItems.dart';
@@ -84,6 +85,7 @@ class _MyAppState extends State<MyApp> {
         "/calendar":(context) => Calendar(),
         "/addNewEvent":(context) => AddNewEvent(),
         "/editEvent":(context) => EditEvent(),
+        "/recommendationResult":(context) => RecommendationResult(argument: ModalRoute.of(context)!.settings.arguments as Map,),
       },
       initialRoute: "/",
     );

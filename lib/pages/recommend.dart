@@ -84,6 +84,7 @@ class _RecommendState extends State<Recommend> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         titleSpacing: 5,
         iconTheme: IconThemeData(
@@ -98,6 +99,8 @@ class _RecommendState extends State<Recommend> {
           children: [
             Align(child: Text("Recommendation System",style: TextStyle(color: Colors.green,fontSize: 30,fontWeight: FontWeight.bold),),alignment: Alignment.centerLeft,),
             SizedBox(height: 40,),
+            Text("Nitrogen Content",style: TextStyle(fontWeight: FontWeight.bold),),
+            SizedBox(height: 8,),
             Container(
               padding: EdgeInsets.symmetric(vertical: 5,horizontal: 20),
               decoration: BoxDecoration(
@@ -116,6 +119,8 @@ class _RecommendState extends State<Recommend> {
               ),
             ),
             SizedBox(height: 15,),
+            Text("Potassium Content",style: TextStyle(fontWeight: FontWeight.bold),),
+            SizedBox(height: 8,),
             Container(
               padding: EdgeInsets.symmetric(vertical: 5,horizontal: 20),
               decoration: BoxDecoration(
@@ -134,6 +139,8 @@ class _RecommendState extends State<Recommend> {
               ),
             ),
             SizedBox(height: 15,),
+            Text("Phosphorus Content",style: TextStyle(fontWeight: FontWeight.bold),),
+            SizedBox(height: 8,),
             Container(
               padding: EdgeInsets.symmetric(vertical: 5,horizontal: 20),
               decoration: BoxDecoration(
@@ -152,6 +159,8 @@ class _RecommendState extends State<Recommend> {
               ),
             ),
             SizedBox(height: 15,),
+            Text("Temperature",style: TextStyle(fontWeight: FontWeight.bold),),
+            SizedBox(height: 8,),
             Container(
               padding: EdgeInsets.symmetric(vertical: 5,horizontal: 20),
               decoration: BoxDecoration(
@@ -170,6 +179,8 @@ class _RecommendState extends State<Recommend> {
               ),
             ),
             SizedBox(height: 15,),
+            Text("Rainfall Content",style: TextStyle(fontWeight: FontWeight.bold),),
+            SizedBox(height: 8,),
             Container(
               padding: EdgeInsets.symmetric(vertical: 5,horizontal: 20),
               decoration: BoxDecoration(
@@ -188,6 +199,8 @@ class _RecommendState extends State<Recommend> {
               ),
             ),
             SizedBox(height: 15,),
+            Text("pH",style: TextStyle(fontWeight: FontWeight.bold),),
+            SizedBox(height: 8,),
             Container(
               padding: EdgeInsets.symmetric(vertical: 5,horizontal: 20),
               decoration: BoxDecoration(
@@ -206,6 +219,8 @@ class _RecommendState extends State<Recommend> {
               ),
             ),
             SizedBox(height: 15,),
+            Text("Humidity Content",style: TextStyle(fontWeight: FontWeight.bold),),
+            SizedBox(height: 8,),
             Container(
               padding: EdgeInsets.symmetric(vertical: 5,horizontal: 20),
               decoration: BoxDecoration(
@@ -224,6 +239,8 @@ class _RecommendState extends State<Recommend> {
               ),
             ),
             SizedBox(height: 15,),
+            Text("Select a crop (optional)",style: TextStyle(fontWeight: FontWeight.bold),),
+            SizedBox(height: 8,),
             Container(
               padding: EdgeInsets.symmetric(vertical: 5,horizontal: 20),
               decoration: BoxDecoration(
@@ -285,17 +302,18 @@ class _RecommendState extends State<Recommend> {
                   alertDialog("Alert", "Please check your network connection and try again.");
                 }
                 else{
+                  Navigator.pushNamed(context, "/recommendationResult",arguments:{"result":result,"temp":temperature.text,"N":N.text,"P":P.text,"K":K.text,"humidity":humidity.text,"rainfall":rainfall.text,"ph":ph.text,"crop":cropName=="Select a crop for checking (optional)"?null:cropName});
                   N.clear();K.clear();P.clear();temperature.clear();
                   ph.clear();humidity.clear();rainfall.clear();
-                  if(cropName=="Select a crop for checking (optional)"){
-                    alertDialog("Result", "Recommended Crop for your soil composition is: ${capitalize(result)}");
-                  }
-                  else if(capitalize(result)==cropName){
-                    alertDialog("Result", "Selected crop will be suitable for the given soil composition.");
-                  }
-                  else{
-                    alertDialog("Result", "Selected crop is not suitable for the given soil composition. Recommended Crop for your soil composition is: ${capitalize(result)}");
-                  }
+                  // if(cropName=="Select a crop for checking (optional)"){
+                  //   alertDialog("Result", "Recommended Crop for your soil composition is: ${capitalize(result)}");
+                  // }
+                  // else if(capitalize(result)==cropName){
+                  //   alertDialog("Result", "Selected crop will be suitable for the given soil composition.");
+                  // }
+                  // else{
+                  //   alertDialog("Result", "Selected crop is not suitable for the given soil composition. Recommended Crop for your soil composition is: ${capitalize(result)}");
+                  // }
                   cropName="Select a crop for checking (optional)";
                   setState(() {});
                 }
