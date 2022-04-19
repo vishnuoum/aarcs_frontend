@@ -100,4 +100,22 @@ class LoginService{
       print("OTP exception:$e");
     }
   }
+
+  Future<dynamic> authenticate({required String phone})async{
+
+    try {
+      Response response = await post(Uri.parse("http://192.168.18.46:3000/authenticate"),
+          body: {"phone": phone});
+      if (response.body == "done") {
+        return "done";
+      }
+      else{
+        return "error";
+      }
+    }
+    catch(e){
+      print("authenticate exception: $e");
+      return "error";
+    }
+  }
 }

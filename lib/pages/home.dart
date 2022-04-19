@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:agri_app/icons/icon_icons.dart';
 import 'package:agri_app/services/analyticsService.dart';
 import 'package:agri_app/services/dbservice.dart';
+import 'package:agri_app/services/loginService.dart';
 import 'package:agri_app/services/weatherService.dart';
 import 'package:fab_circular_menu/fab_circular_menu.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +27,7 @@ class _HomeState extends State<Home> {
 
   final GlobalKey<FabCircularMenuState> fabKey = GlobalKey();
   DateTime start = DateTime.now();
+  LoginService loginService = LoginService();
 
   late SharedPreferences sharedPreferences;
   final ImagePicker _picker = ImagePicker();
@@ -33,6 +35,7 @@ class _HomeState extends State<Home> {
   late DBService dbObject;
   WeatherService weatherService=WeatherService();
   String weather="";
+  bool authentication=false,authenticated=false;
 
   AnalyticsService analyticsService=AnalyticsService();
   late PaletteGenerator paletteGenerator;
@@ -74,20 +77,52 @@ class _HomeState extends State<Home> {
 
   void loadSharedPreferences()async{
     sharedPreferences=await SharedPreferences.getInstance();
-    var result=await weatherService.getWeather(phone: sharedPreferences.getString("phone"));
-    if(result!="error"){
-      weather="${(result["main"]["temp"]-273).toStringAsFixed(2)}°C  ${capitalize(result["weather"][0]["description"])}";
-    }
-    setState(() {});
+    await checkLogin();
   }
 
-  bool checkLogin(){
-    try{
-      return sharedPreferences.containsKey("phone");
+  void weatherApi()async{
+    if(sharedPreferences.containsKey("phone")) {
+      var result = await weatherService.getWeather(
+          phone: sharedPreferences.getString("phone"));
+      if (result != "error") {
+        weather =
+        "${(result["main"]["temp"] - 273).toStringAsFixed(2)}°C  ${capitalize(
+            result["weather"][0]["description"])}";
+      }
+      setState(() {});
+    }
+  }
+
+  Future<void> checkLogin()async{
+    try {
+      if (sharedPreferences.containsKey("phone")) {
+        if (!authentication) {
+          setState(() {
+            authentication = true;
+          });
+        }
+        var result = await loginService.authenticate(
+            phone: sharedPreferences.getString("phone").toString());
+        if (result == "done") {
+          weatherApi();
+          setState(() {
+            authentication = false;
+            authenticated = true;
+          });
+        }
+        else {
+          Future.delayed(Duration(seconds: 5), () {
+            checkLogin();
+          });
+        }
+      }
     }
     catch(e){
-      return false;
+      Future.delayed(Duration(seconds: 5), () {
+        checkLogin();
+      });
     }
+
   }
 
 
@@ -355,7 +390,7 @@ class _HomeState extends State<Home> {
                 ],
               ),
             ),
-            checkLogin()?ListTile(
+            authenticated?ListTile(
               leading: Icon(Icons.calendar_today_rounded),
               title: Text("Event Scheduler"),
               onTap: (){
@@ -363,7 +398,7 @@ class _HomeState extends State<Home> {
                 Navigator.pushNamed(context, "/calendar",arguments: {"db":dbObject});
               },
             ):Container(),
-            checkLogin()?ListTile(
+            authenticated?ListTile(
               leading: Icon(Icons.shopping_cart_rounded),
               title: Text("Market Place"),
               onTap: (){
@@ -371,7 +406,7 @@ class _HomeState extends State<Home> {
                 Navigator.pushNamed(context, "/market");
               },
             ):Container(),
-            checkLogin()?ListTile(
+            authenticated?ListTile(
               leading: Icon(Icons.settings),
               title: Text("Rent a Tool"),
               onTap: (){
@@ -379,7 +414,7 @@ class _HomeState extends State<Home> {
                 Navigator.pushNamed(context, "/rent");
               },
             ):Container(),
-            checkLogin()?ListTile(
+            authenticated?ListTile(
               leading: Icon(Icons.place),
               title: Text("Lend a Land"),
               onTap: (){
@@ -395,7 +430,7 @@ class _HomeState extends State<Home> {
                 await canLaunch("mailto:agri-app@gmail.com?subject=Agri%20App&body=New%20plugin") ? await launch("mailto:agri-app@gmail.com?subject=Agri%20App&body=New%20plugin") : throw 'Could not launch gmail';
               },
             ),
-            checkLogin()?ListTile(
+            authenticated?ListTile(
               leading: Icon(Icons.logout),
               title: Text("Logout"),
               onTap: ()async{
@@ -415,7 +450,7 @@ class _HomeState extends State<Home> {
         fabOpenIcon: Icon(Icons.lightbulb,color: Colors.white,),
         fabCloseIcon: Icon(Icons.close,color: Colors.white,),
         children: <Widget>[
-          IconButton(tooltip: "Community Chat",color: Colors.white,splashColor: Colors.transparent,focusColor: Colors.transparent,highlightColor: Colors.transparent,icon: Icon(Icons.message), onPressed: checkLogin()?() {
+          IconButton(tooltip: "Community Chat",color: Colors.white,splashColor: Colors.transparent,focusColor: Colors.transparent,highlightColor: Colors.transparent,icon: Icon(Icons.message), onPressed: authenticated?() {
             print('Community Chat');
             fabKey.currentState!.close();
             Navigator.pushNamed(context, "/chat");
@@ -454,7 +489,11 @@ class _HomeState extends State<Home> {
             Row(
               children: [
                 SizedBox(width: 30,),
-                checkLogin()?ElevatedButton(
+                authentication?ElevatedButton(
+                  onPressed: (){},
+                  child: SizedBox(height: 18,width: 18,child: CircularProgressIndicator(color: Colors.white,)),
+                  style: TextButton.styleFrom(elevation: 5,fixedSize: Size.fromWidth(double.infinity),padding: EdgeInsets.all(18),backgroundColor: Colors.green,primary: Colors.white,shape:RoundedRectangleBorder(borderRadius: BorderRadius.circular(50))),
+                ):authenticated?ElevatedButton(
                   onPressed: (){
                     Navigator.pushNamed(context, "/profile");
                   },

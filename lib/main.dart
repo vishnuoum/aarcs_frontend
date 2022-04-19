@@ -7,7 +7,7 @@ import 'package:agri_app/pages/calendar.dart';
 import 'package:agri_app/pages/changePassword.dart';
 import 'package:agri_app/pages/chat.dart';
 import 'package:agri_app/pages/editEvent.dart';
-import 'package:agri_app/pages/mainHome.dart';
+import 'package:agri_app/pages/home.dart';
 import 'package:agri_app/pages/land.dart';
 import 'package:agri_app/pages/login.dart';
 import 'package:agri_app/pages/market.dart';

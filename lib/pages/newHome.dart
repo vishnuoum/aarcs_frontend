@@ -404,32 +404,32 @@ class _HomeState extends State<Home> {
         ),
       ),
       backgroundColor: Colors.green,
-      floatingActionButton: FabCircularMenu(
-          key: fabKey,
-          fabColor: Colors.green,
-          ringColor: Colors.green,
-          fabOpenIcon: Icon(Icons.lightbulb,color: Colors.white,),
-          fabCloseIcon: Icon(Icons.close,color: Colors.white,),
-          children: <Widget>[
-            IconButton(tooltip: "Community Chat",color: Colors.white,splashColor: Colors.transparent,focusColor: Colors.transparent,highlightColor: Colors.transparent,icon: Icon(Icons.message), onPressed: checkLogin()?() {
-              print('Community Chat');
-              fabKey.currentState!.close();
-              Navigator.pushNamed(context, "/chat");
-            }:null,),
-            IconButton(tooltip: "Crop Recommendation",icon: Icon(FlutterIcon.soil),color: Colors.white,splashColor: Colors.transparent,focusColor: Colors.transparent,highlightColor: Colors.transparent,onPressed: ()async{
-              fabKey.currentState!.close();
-              await Navigator.pushNamed(context, "/recommend");
-            },),
-            IconButton(tooltip: "Scan Seedling",color: Colors.white,splashColor: Colors.transparent,focusColor: Colors.transparent,highlightColor: Colors.transparent,icon: Icon(FlutterIcon.plant), onPressed: ()async {
-              fabKey.currentState!.close();
-              seedlingScan(context);
-            }),
-            IconButton(tooltip: "Scan Leaf",color: Colors.white,splashColor: Colors.transparent,focusColor: Colors.transparent,highlightColor: Colors.transparent,icon: Icon(FlutterIcon.leaf), onPressed: ()async {
-              fabKey.currentState!.close();
-              leafScan(context);
-            }),
-          ]
-      ),
+      // floatingActionButton: FabCircularMenu(
+      //     key: fabKey,
+      //     fabColor: Colors.green,
+      //     ringColor: Colors.green,
+      //     fabOpenIcon: Icon(Icons.lightbulb,color: Colors.white,),
+      //     fabCloseIcon: Icon(Icons.close,color: Colors.white,),
+      //     children: <Widget>[
+      //       IconButton(tooltip: "Community Chat",color: Colors.white,splashColor: Colors.transparent,focusColor: Colors.transparent,highlightColor: Colors.transparent,icon: Icon(Icons.message), onPressed: checkLogin()?() {
+      //         print('Community Chat');
+      //         fabKey.currentState!.close();
+      //         Navigator.pushNamed(context, "/chat");
+      //       }:null,),
+      //       IconButton(tooltip: "Crop Recommendation",icon: Icon(FlutterIcon.soil),color: Colors.white,splashColor: Colors.transparent,focusColor: Colors.transparent,highlightColor: Colors.transparent,onPressed: ()async{
+      //         fabKey.currentState!.close();
+      //         await Navigator.pushNamed(context, "/recommend");
+      //       },),
+      //       IconButton(tooltip: "Scan Seedling",color: Colors.white,splashColor: Colors.transparent,focusColor: Colors.transparent,highlightColor: Colors.transparent,icon: Icon(FlutterIcon.plant), onPressed: ()async {
+      //         fabKey.currentState!.close();
+      //         seedlingScan(context);
+      //       }),
+      //       IconButton(tooltip: "Scan Leaf",color: Colors.white,splashColor: Colors.transparent,focusColor: Colors.transparent,highlightColor: Colors.transparent,icon: Icon(FlutterIcon.leaf), onPressed: ()async {
+      //         fabKey.currentState!.close();
+      //         leafScan(context);
+      //       }),
+      //     ]
+      // ),
       body: GestureDetector(
         onTap: (){
           fabKey.currentState!.close();
@@ -438,16 +438,16 @@ class _HomeState extends State<Home> {
           padding: EdgeInsets.only(top: 20),
           children: [
             Padding(padding: EdgeInsets.only(right: 10,top: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Text(weather,style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 16),),
-                  SizedBox(width: 15,),
-                  IconButton(icon: Icon(Icons.menu_open),onPressed: (){
-                    _scaffoldKey.currentState!.openEndDrawer();
-                  },color: Colors.white,iconSize: 25,),
-                ],
-              ),),
+                child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text(weather,style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 16),),
+                SizedBox(width: 15,),
+                IconButton(icon: Icon(Icons.menu_open),onPressed: (){
+                  _scaffoldKey.currentState!.openEndDrawer();
+                },color: Colors.white,iconSize: 25,),
+              ],
+            ),),
             SizedBox(height: 20,),
             Padding(
               padding: const EdgeInsets.only(left: 30.0),
@@ -466,7 +466,7 @@ class _HomeState extends State<Home> {
                 margin: EdgeInsets.zero,
                 elevation: 10,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(30))
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(30))
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -489,7 +489,7 @@ class _HomeState extends State<Home> {
                         style: TextButton.styleFrom(
                             backgroundColor: Colors.green,
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-                          padding: EdgeInsets.symmetric(horizontal: 20,vertical: 16)
+                            padding: EdgeInsets.symmetric(horizontal: 20,vertical: 16)
                         ),
                         onPressed: (){
                           if(checkLogin()){
@@ -500,14 +500,14 @@ class _HomeState extends State<Home> {
                           }
                         },
                         child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(checkLogin()?"Your Profile":"Get Started",style: TextStyle(color: Colors.white,fontSize: 18),),
-                          SizedBox(width: checkLogin()?10:0,),
-                          checkLogin()?Icon(Icons.person,color: Colors.white,):SizedBox()
-                        ],
-                      ),
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(checkLogin()?"Your Profile":"Get Started",style: TextStyle(color: Colors.white,fontSize: 18),),
+                            SizedBox(width: checkLogin()?10:0,),
+                            checkLogin()?Icon(Icons.person,color: Colors.white,):SizedBox()
+                          ],
+                        ),
                       ),
                     ),
                     Padding(
@@ -521,7 +521,7 @@ class _HomeState extends State<Home> {
                         children: [
                           Card(
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10)
+                                borderRadius: BorderRadius.circular(10)
                             ),
                             elevation: 10,
                             child: InkWell(
