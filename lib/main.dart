@@ -3,10 +3,12 @@ import 'package:agri_app/pages/addNewCrop.dart';
 import 'package:agri_app/pages/addNewEvent.dart';
 import 'package:agri_app/pages/addNewLand.dart';
 import 'package:agri_app/pages/addNewTool.dart';
+import 'package:agri_app/pages/askCommunity.dart';
 import 'package:agri_app/pages/calendar.dart';
 import 'package:agri_app/pages/changePassword.dart';
 import 'package:agri_app/pages/chat.dart';
 import 'package:agri_app/pages/chooseHome.dart';
+import 'package:agri_app/pages/doubt.dart';
 import 'package:agri_app/pages/editEvent.dart';
 import 'package:agri_app/pages/home.dart';
 import 'package:agri_app/pages/initial.dart';
@@ -20,6 +22,7 @@ import 'package:agri_app/pages/profile.dart';
 import 'package:agri_app/pages/recommend.dart';
 import 'package:agri_app/pages/recommended.dart';
 import 'package:agri_app/pages/rent.dart';
+import 'package:agri_app/pages/showCommunity.dart';
 import 'package:agri_app/pages/signup.dart';
 import 'package:agri_app/pages/userItems.dart';
 import 'package:agri_app/pages/userLands.dart';
@@ -93,9 +96,11 @@ class _MyAppState extends State<MyApp> {
         "/calendar":(context) => Calendar(),
         "/addNewEvent":(context) => AddNewEvent(),
         "/editEvent":(context) => EditEvent(),
+        "/showCommunity":(context) => ShowCommunity(),
         "/recommendationResult":(context) => RecommendationResult(argument: ModalRoute.of(context)!.settings.arguments as Map,),
+        "/doubt":(context) => Doubt(arguments: ModalRoute.of(context)!.settings.arguments as Map,),
       },
-      initialRoute: "/init",
+      initialRoute: "/showCommunity",
     );
   }
 }
