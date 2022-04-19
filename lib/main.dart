@@ -6,8 +6,12 @@ import 'package:agri_app/pages/addNewTool.dart';
 import 'package:agri_app/pages/calendar.dart';
 import 'package:agri_app/pages/changePassword.dart';
 import 'package:agri_app/pages/chat.dart';
+import 'package:agri_app/pages/chooseHome.dart';
 import 'package:agri_app/pages/editEvent.dart';
 import 'package:agri_app/pages/home.dart';
+import 'package:agri_app/pages/initial.dart';
+import 'package:agri_app/pages/mainHome.dart';
+import 'package:agri_app/pages/newHome.dart';
 import 'package:agri_app/pages/land.dart';
 import 'package:agri_app/pages/login.dart';
 import 'package:agri_app/pages/market.dart';
@@ -64,7 +68,11 @@ class _MyAppState extends State<MyApp> {
         primarySwatch: Colors.green,
       ),
       routes: {
-        "/" : (context) => Home(),
+        "/init" : (context) => Init(),
+        "/home" : (context) => Home(),
+        "/home1" : (context) => Home1(),
+        "/home2" : (context) => Home2(),
+        "/chooseHome" : (context) => ChooseHome(),
         "/login" : (context) => Login(),
         "/signup" : (context) => Signup(),
         "/crop" : (context) => Crop( arguments:ModalRoute.of(context)!.settings.arguments as Map,),
@@ -87,7 +95,7 @@ class _MyAppState extends State<MyApp> {
         "/editEvent":(context) => EditEvent(),
         "/recommendationResult":(context) => RecommendationResult(argument: ModalRoute.of(context)!.settings.arguments as Map,),
       },
-      initialRoute: "/",
+      initialRoute: "/init",
     );
   }
 }

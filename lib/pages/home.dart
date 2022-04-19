@@ -390,6 +390,14 @@ class _HomeState extends State<Home> {
                 ],
               ),
             ),
+            ListTile(
+              leading: Icon(Icons.home),
+              title: Text("Home Style"),
+              onTap: (){
+                Navigator.pop(context);
+                Navigator.pushNamed(context, "/chooseHome");
+              },
+            ),
             authenticated?ListTile(
               leading: Icon(Icons.calendar_today_rounded),
               title: Text("Event Scheduler"),

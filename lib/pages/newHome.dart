@@ -4,26 +4,26 @@ import 'dart:math';
 import 'package:agri_app/icons/icon_icons.dart';
 import 'package:agri_app/services/analyticsService.dart';
 import 'package:agri_app/services/dbservice.dart';
+import 'package:agri_app/services/loginService.dart';
 import 'package:agri_app/services/weatherService.dart';
 import 'package:fab_circular_menu/fab_circular_menu.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tflite/tflite.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class Home extends StatefulWidget {
-  Home({Key? key}) : super(key: key);
+class Home2 extends StatefulWidget {
+  Home2({Key? key}) : super(key: key);
 
   @override
-  _HomeState createState() => _HomeState();
+  _Home2State createState() => _Home2State();
 }
 
-class _HomeState extends State<Home> {
+class _Home2State extends State<Home2> {
 
   final GlobalKey<FabCircularMenuState> fabKey = GlobalKey();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -38,6 +38,8 @@ class _HomeState extends State<Home> {
 
   AnalyticsService analyticsService=AnalyticsService();
   late PaletteGenerator paletteGenerator;
+  LoginService loginService = LoginService();
+  bool authentication=false,authenticated=false;
 
   @override
   void initState() {
@@ -76,20 +78,52 @@ class _HomeState extends State<Home> {
 
   void loadSharedPreferences()async{
     sharedPreferences=await SharedPreferences.getInstance();
-    var result=await weatherService.getWeather(phone: sharedPreferences.getString("phone"));
-    if(result!="error"){
-      weather="${(result["main"]["temp"]-273).toStringAsFixed(2)}°C  ${capitalize(result["weather"][0]["description"])}";
-    }
-    setState(() {});
+    await checkLogin();
   }
 
-  bool checkLogin(){
-    try{
-      return sharedPreferences.containsKey("phone");
+  void weatherApi()async{
+    if(sharedPreferences.containsKey("phone")) {
+      var result = await weatherService.getWeather(
+          phone: sharedPreferences.getString("phone"));
+      if (result != "error") {
+        weather =
+        "${(result["main"]["temp"] - 273).toStringAsFixed(2)}°C  ${capitalize(
+            result["weather"][0]["description"])}";
+      }
+      setState(() {});
+    }
+  }
+
+  Future<void> checkLogin()async{
+    try {
+      if (sharedPreferences.containsKey("phone")) {
+        if (!authentication) {
+          setState(() {
+            authentication = true;
+          });
+        }
+        var result = await loginService.authenticate(
+            phone: sharedPreferences.getString("phone").toString());
+        if (result == "done") {
+          weatherApi();
+          setState(() {
+            authentication = false;
+            authenticated = true;
+          });
+        }
+        else {
+          Future.delayed(Duration(seconds: 5), () {
+            checkLogin();
+          });
+        }
+      }
     }
     catch(e){
-      return false;
+      Future.delayed(Duration(seconds: 5), () {
+        checkLogin();
+      });
     }
+
   }
 
 
@@ -343,38 +377,14 @@ class _HomeState extends State<Home> {
                 ],
               ),
             ),
-            checkLogin()?ListTile(
-              leading: Icon(Icons.calendar_today_rounded),
-              title: Text("Event Scheduler"),
+            ListTile(
+              leading: Icon(Icons.home),
+              title: Text("Home Style"),
               onTap: (){
                 Navigator.pop(context);
-                Navigator.pushNamed(context, "/calendar",arguments: {"db":dbObject});
+                Navigator.pushNamed(context, "/chooseHome");
               },
-            ):Container(),
-            checkLogin()?ListTile(
-              leading: Icon(Icons.shopping_cart_rounded),
-              title: Text("Market Place"),
-              onTap: (){
-                Navigator.pop(context);
-                Navigator.pushNamed(context, "/market");
-              },
-            ):Container(),
-            checkLogin()?ListTile(
-              leading: Icon(Icons.settings),
-              title: Text("Rent a Tool"),
-              onTap: (){
-                Navigator.pop(context);
-                Navigator.pushNamed(context, "/rent");
-              },
-            ):Container(),
-            checkLogin()?ListTile(
-              leading: Icon(Icons.place),
-              title: Text("Lend a Land"),
-              onTap: (){
-                Navigator.pop(context);
-                Navigator.pushNamed(context, "/land");
-              },
-            ):Container(),
+            ),
             ListTile(
               leading: Icon(Icons.description),
               title: Text("Logs"),
@@ -391,7 +401,7 @@ class _HomeState extends State<Home> {
                 await canLaunch("mailto:agri-app@gmail.com?subject=Agri%20App&body=New%20plugin") ? await launch("mailto:agri-app@gmail.com?subject=Agri%20App&body=New%20plugin") : throw 'Could not launch gmail';
               },
             ),
-            checkLogin()?ListTile(
+            authenticated?ListTile(
               leading: Icon(Icons.logout),
               title: Text("Logout"),
               onTap: ()async{
@@ -403,513 +413,455 @@ class _HomeState extends State<Home> {
           ],
         ),
       ),
-      backgroundColor: Colors.green,
-      // floatingActionButton: FabCircularMenu(
-      //     key: fabKey,
-      //     fabColor: Colors.green,
-      //     ringColor: Colors.green,
-      //     fabOpenIcon: Icon(Icons.lightbulb,color: Colors.white,),
-      //     fabCloseIcon: Icon(Icons.close,color: Colors.white,),
-      //     children: <Widget>[
-      //       IconButton(tooltip: "Community Chat",color: Colors.white,splashColor: Colors.transparent,focusColor: Colors.transparent,highlightColor: Colors.transparent,icon: Icon(Icons.message), onPressed: checkLogin()?() {
-      //         print('Community Chat');
-      //         fabKey.currentState!.close();
-      //         Navigator.pushNamed(context, "/chat");
-      //       }:null,),
-      //       IconButton(tooltip: "Crop Recommendation",icon: Icon(FlutterIcon.soil),color: Colors.white,splashColor: Colors.transparent,focusColor: Colors.transparent,highlightColor: Colors.transparent,onPressed: ()async{
-      //         fabKey.currentState!.close();
-      //         await Navigator.pushNamed(context, "/recommend");
-      //       },),
-      //       IconButton(tooltip: "Scan Seedling",color: Colors.white,splashColor: Colors.transparent,focusColor: Colors.transparent,highlightColor: Colors.transparent,icon: Icon(FlutterIcon.plant), onPressed: ()async {
-      //         fabKey.currentState!.close();
-      //         seedlingScan(context);
-      //       }),
-      //       IconButton(tooltip: "Scan Leaf",color: Colors.white,splashColor: Colors.transparent,focusColor: Colors.transparent,highlightColor: Colors.transparent,icon: Icon(FlutterIcon.leaf), onPressed: ()async {
-      //         fabKey.currentState!.close();
-      //         leafScan(context);
-      //       }),
-      //     ]
-      // ),
-      body: GestureDetector(
-        onTap: (){
-          fabKey.currentState!.close();
-        },
-        child: ListView(
-          padding: EdgeInsets.only(top: 20),
-          children: [
-            Padding(padding: EdgeInsets.only(right: 10,top: 20),
-                child: Row(
+      backgroundColor: Colors.white,
+      body: ListView(
+        padding: EdgeInsets.only(top: 20),
+        children: [
+          Padding(padding: EdgeInsets.only(right: 10,top: 20),
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Text(weather,style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 16),),
+                Text(weather,style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 16),),
                 SizedBox(width: 15,),
                 IconButton(icon: Icon(Icons.menu_open),onPressed: (){
                   _scaffoldKey.currentState!.openEndDrawer();
-                },color: Colors.white,iconSize: 25,),
+                },color: Colors.green,iconSize: 25,),
               ],
             ),),
-            SizedBox(height: 20,),
-            Padding(
-              padding: const EdgeInsets.only(left: 30.0),
-              child: Text("A.A.R.C.S.",style: TextStyle(color: Colors.white,fontSize: 40,fontWeight: FontWeight.bold),),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 30,vertical: 5),
-              child: Text("A User-Friendly App for farmers",style: TextStyle(fontSize: 17,color: Colors.white),),
-            ),
-            SizedBox(height: 20,),
-            Container(
-              constraints: BoxConstraints(
-                minHeight: MediaQuery.of(context).size.height-(70+30+40+10+17+20),
+          SizedBox(height: 20,),
+          Padding(
+            padding: const EdgeInsets.only(left: 30.0),
+            child: Text("A.A.R.C.S.",style: TextStyle(color: Colors.green,fontSize: 40,fontWeight: FontWeight.bold),),
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 30,vertical: 5),
+            child: Text("A User-Friendly App for farmers",style: TextStyle(fontSize: 17,color: Colors.green),),
+          ),
+          SizedBox(height: 20,),
+          Row(
+            children: [
+              SizedBox(width: 30,),
+              authentication?ElevatedButton(
+                onPressed: (){},
+                child: SizedBox(height: 18,width: 18,child: CircularProgressIndicator(color: Colors.white,)),
+                style: TextButton.styleFrom(elevation: 5,fixedSize: Size.fromWidth(double.infinity),padding: EdgeInsets.all(18),backgroundColor: Colors.green,primary: Colors.white,shape:RoundedRectangleBorder(borderRadius: BorderRadius.circular(50))),
+              ):authenticated?ElevatedButton(
+                onPressed: (){
+                  Navigator.pushNamed(context, "/profile");
+                },
+                child: Row(children: [Text("Your Profile",style: TextStyle(fontSize: 16),),SizedBox(width: 5,),Icon(Icons.person,size: 18,)],),
+                style: TextButton.styleFrom(elevation: 5,fixedSize: Size.fromWidth(double.infinity),padding: EdgeInsets.all(18),backgroundColor: Colors.green,primary: Colors.white,shape:RoundedRectangleBorder(borderRadius: BorderRadius.circular(50))),
+              ):
+              ElevatedButton(
+                onPressed: ()async{
+                  Navigator.pushNamed(context, "/login").then((_) => setState(() {}));
+
+                },
+                child: Row(children: [Text("Get Started",style: TextStyle(fontSize: 16),),SizedBox(width: 5,),Icon(Icons.arrow_forward_rounded,size: 18,)],),
+                style: TextButton.styleFrom(elevation: 5,fixedSize: Size.fromWidth(double.infinity),padding: EdgeInsets.all(18),backgroundColor: Colors.green,primary: Colors.white,shape:RoundedRectangleBorder(borderRadius: BorderRadius.circular(50))),
               ),
-              child: Card(
-                margin: EdgeInsets.zero,
-                elevation: 10,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(30))
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Center(
-                      child: Container(
-                        margin: EdgeInsets.all(10),
-                        height: 5,
-                        width: 80,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(500),
-                          color: Colors.green,
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 20,),
-                    Container(
-                      margin: EdgeInsets.only(left: 25),
-                      child: TextButton(
-                        style: TextButton.styleFrom(
-                            backgroundColor: Colors.green,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-                            padding: EdgeInsets.symmetric(horizontal: 20,vertical: 16)
-                        ),
-                        onPressed: (){
-                          if(checkLogin()){
-                            Navigator.pushNamed(context, "/profile").then((_) => setState(() {}));
-                          }
-                          else{
-                            Navigator.pushNamed(context, "/login").then((_) => setState(() {}));
-                          }
-                        },
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(checkLogin()?"Your Profile":"Get Started",style: TextStyle(color: Colors.white,fontSize: 18),),
-                            SizedBox(width: checkLogin()?10:0,),
-                            checkLogin()?Icon(Icons.person,color: Colors.white,):SizedBox()
-                          ],
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 30.0,right: 30,top:15,bottom: 5),
-                      child: Text("On-Edge Services",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.green,fontSize: 17),),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 30.0,right: 30,top:15,bottom: 5),
-                      child:Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Card(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)
-                            ),
-                            elevation: 10,
-                            child: InkWell(
-                              onTap: (){
-                                leafScan(context);
-                              },
-                              borderRadius: BorderRadius.circular(10),
-                              child: Container(
-                                height: 100,
-                                width: 100,
-                                padding: EdgeInsets.all(10),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(FlutterIcon.leaf,color: Colors.green,size: 30,),
-                                    SizedBox(height: 10,),
-                                    Text("Disease",style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 17),)
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          Card(
-                            color: Colors.green,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)
-                            ),
-                            elevation: 10,
-                            child: InkWell(
-                              onTap: (){
-                                seedlingScan(context);
-                              },
-                              borderRadius: BorderRadius.circular(10),
-                              child: Container(
-                                height: 100,
-                                width: 100,
-                                padding: EdgeInsets.all(10),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(FlutterIcon.plant,color: Colors.white,size: 30,),
-                                    SizedBox(height: 10,),
-                                    Text("Seedling",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 17),)
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          Card(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)
-                            ),
-                            elevation: 10,
-                            child: InkWell(
-                              onTap: (){
-                                Navigator.pushNamed(context, "/recommend");
-                              },
-                              borderRadius: BorderRadius.circular(10),
-                              child: Container(
-                                height: 100,
-                                width: 100,
-                                padding: EdgeInsets.all(10),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(FlutterIcon.soil,color: Colors.green,size: 30,),
-                                    SizedBox(height: 10,),
-                                    Text("Crop",style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 17),)
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 30.0,right: 30,top:15,bottom: 5),
-                      child:Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Card(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)
-                            ),
-                            elevation: 10,
-                            child: InkWell(
-                              onTap: (){
-                                Navigator.pushNamed(context, "/calendar",arguments: {"db":dbObject});
-                              },
-                              borderRadius: BorderRadius.circular(10),
-                              child: Container(
-                                height: 100,
-                                width: 100,
-                                padding: EdgeInsets.all(10),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(Icons.calendar_today,color: Colors.green,size: 30,),
-                                    SizedBox(height: 10,),
-                                    Text("Scheduler",style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 17),)
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 20,),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 30.0,right: 30,top:15,bottom: 5),
-                      child: Text("Online Services",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.green,fontSize: 17),),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 30.0,right: 30,top:15,bottom: 5),
-                      child:Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Card(
-                            color: Colors.green,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)
-                            ),
-                            elevation: 10,
-                            child: InkWell(
-                              onTap: checkLogin()?(){
-                                Navigator.pushNamed(context, "/market");
-                              }:null,
-                              borderRadius: BorderRadius.circular(10),
-                              child: Container(
-                                height: 100,
-                                width: 100,
-                                padding: EdgeInsets.all(10),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(Icons.shopping_basket,color: Colors.white,size: 30,),
-                                    SizedBox(height: 10,),
-                                    Text("Market",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 17),)
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          Card(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)
-                            ),
-                            elevation: 10,
-                            child: InkWell(
-                              onTap: checkLogin()?(){
-                                Navigator.pushNamed(context, "/land");
-                              }:null,
-                              borderRadius: BorderRadius.circular(10),
-                              child: Container(
-                                height: 100,
-                                width: 100,
-                                padding: EdgeInsets.all(10),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(Icons.location_on,color: Colors.green,size: 30,),
-                                    SizedBox(height: 10,),
-                                    Text("Land",style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 17),)
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          Card(
-                            color: Colors.green,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)
-                            ),
-                            elevation: 10,
-                            child: InkWell(
-                              onTap: checkLogin()?(){
-                                Navigator.pushNamed(context, "/rent");
-                              }:null,
-                              borderRadius: BorderRadius.circular(10),
-                              child: Container(
-                                height: 100,
-                                width: 100,
-                                padding: EdgeInsets.all(10),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(Icons.settings,color: Colors.white,size: 30,),
-                                    SizedBox(height: 10,),
-                                    Text("Tools",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 17),)
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 30.0,right: 30,top:15,bottom: 5),
-                      child:Row(
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 30.0,right: 30,top:15,bottom: 5),
+            child: Text("On-Edge Services",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.green,fontSize: 17),),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 30.0,right: 30,top:15,bottom: 5),
+            child:Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Card(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)
+                  ),
+                  elevation: 10,
+                  child: InkWell(
+                    onTap: (){
+                      leafScan(context);
+                    },
+                    borderRadius: BorderRadius.circular(10),
+                    child: Container(
+                      height: 100,
+                      width: 100,
+                      padding: EdgeInsets.all(10),
+                      child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Card(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)
-                            ),
-                            elevation: 10,
-                            child: InkWell(
-                              onTap: checkLogin()?(){
-                                Navigator.pushNamed(context, "/chat");
-                              }:null,
-                              borderRadius: BorderRadius.circular(10),
-                              child: Container(
-                                height: 100,
-                                width: 100,
-                                padding: EdgeInsets.all(10),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(Icons.chat_bubble,color: Colors.green,size: 30,),
-                                    SizedBox(height: 10,),
-                                    Text("Chat",style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 17),)
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          Card(
-                            color: Colors.white,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)
-                            ),
-                            elevation: 10,
-                            child: InkWell(
-                              onTap: (){},
-                              borderRadius: BorderRadius.circular(10),
-                              child: Container(
-                                height: 100,
-                                width: 100,
-                                padding: EdgeInsets.all(10),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(Icons.question_answer,color: Colors.green,size: 30,),
-                                    SizedBox(height: 10,),
-                                    Text("Post",style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 17),)
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
+                          Icon(FlutterIcon.leaf,color: Colors.green,size: 30,),
+                          SizedBox(height: 10,),
+                          Text("Disease",style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 17),)
                         ],
                       ),
                     ),
-                    SizedBox(height: 20,),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 30.0,right: 30,top:15,bottom: 5),
-                      child: Text("Common Regional Varieties",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.green,fontSize: 17),),
-                    ),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 250,
-                      child: ListView(
-                        padding: const EdgeInsets.all(10.0),
-                        physics: BouncingScrollPhysics(),
-                        scrollDirection:Axis.horizontal,
+                  ),
+                ),
+                Card(
+                  color: Colors.green,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)
+                  ),
+                  elevation: 10,
+                  child: InkWell(
+                    onTap: (){
+                      seedlingScan(context);
+                    },
+                    borderRadius: BorderRadius.circular(10),
+                    child: Container(
+                      height: 100,
+                      width: 100,
+                      padding: EdgeInsets.all(10),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          SizedBox(width: 20,),
-                          InkWell(
-                            onTap: ()async{
-                              print("rice");
-                              var result=await dbObject.getInfo(1);
-                              Navigator.pushNamed(context, "/crop",arguments: result[0]);
-                            },
-                            child: Container(
-                              width: 150,
-                              child: Card(
-                                semanticContainer: true,
-                                clipBehavior: Clip.antiAliasWithSaveLayer,
-                                elevation:6,
-                                child: Stack(
-                                  children: [
-                                    SizedBox.expand(
-                                      child: Image.asset(
-                                        "assets/images/Rice.jpg",fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                    Positioned(left: 10,bottom: 15,child: Text("Rice",style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.bold),))
-                                  ],
-                                ),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: 5,),
-                          InkWell(
-                            onTap: ()async{
-                              print("wheat");
-                              var result=await dbObject.getInfo(2);
-                              Navigator.pushNamed(context, "/crop",arguments: result[0]);
-                            },
-                            child: Container(
-                              width: 150,
-                              child: Card(
-                                semanticContainer: true,
-                                clipBehavior: Clip.antiAliasWithSaveLayer,
-                                elevation:6,
-                                child: Stack(
-                                  children: [
-                                    SizedBox.expand(
-                                      child: Image.asset(
-                                        "assets/images/Wheat.jpg",fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                    Positioned(left: 10,bottom: 15,child: Text("Wheat",style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.bold),))
-                                  ],
-                                ),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: 5,),
-                          InkWell(
-                            onTap: ()async{
-                              print("Sugarcane");
-                              var result=await dbObject.getInfo(3);
-                              Navigator.pushNamed(context, "/crop",arguments: result[0]);
-                            },
-                            child: Container(
-                              width: 150,
-                              child: Card(
-                                semanticContainer: true,
-                                clipBehavior: Clip.antiAliasWithSaveLayer,
-                                elevation:6,
-                                child: Stack(
-                                  children: [
-                                    SizedBox.expand(
-                                      child: Image.asset(
-                                        "assets/images/Sugarcane.jpg",fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                    Positioned(left: 10,bottom: 15,child: Text("Sugarcane",style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.bold),))
-                                  ],
-                                ),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: 5,),
-                          InkWell(
-                            onTap: ()async{
-                              print("corn");
-                              var result=await dbObject.getInfo(4);
-                              Navigator.pushNamed(context, "/crop",arguments: result[0]);
-                            },
-                            child: Container(
-                              width: 150,
-                              child: Card(
-                                semanticContainer: true,
-                                clipBehavior: Clip.antiAliasWithSaveLayer,
-                                elevation:6,
-                                child: Stack(
-                                  children: [
-                                    SizedBox.expand(
-                                      child: Image.asset(
-                                        "assets/images/Corn.jpg",fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                    Positioned(left: 10,bottom: 15,child: Text("Corn",style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.bold),))
-                                  ],
-                                ),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: 5,),
+                          Icon(FlutterIcon.plant,color: Colors.white,size: 30,),
+                          SizedBox(height: 10,),
+                          Text("Seedling",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 17),)
                         ],
                       ),
                     ),
-                    SizedBox(height: 80,)
+                  ),
+                ),
+                Card(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)
+                  ),
+                  elevation: 10,
+                  child: InkWell(
+                    onTap: (){
+                      Navigator.pushNamed(context, "/recommend");
+                    },
+                    borderRadius: BorderRadius.circular(10),
+                    child: Container(
+                      height: 100,
+                      width: 100,
+                      padding: EdgeInsets.all(10),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(FlutterIcon.soil,color: Colors.green,size: 30,),
+                          SizedBox(height: 10,),
+                          Text("Crop",style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 17),)
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 30.0,right: 30,top:15,bottom: 5),
+            child:Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Card(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)
+                  ),
+                  elevation: 10,
+                  child: InkWell(
+                    onTap: (){
+                      Navigator.pushNamed(context, "/calendar",arguments: {"db":dbObject});
+                    },
+                    borderRadius: BorderRadius.circular(10),
+                    child: Container(
+                      height: 100,
+                      width: 100,
+                      padding: EdgeInsets.all(10),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.calendar_today,color: Colors.green,size: 30,),
+                          SizedBox(height: 10,),
+                          Text("Scheduler",style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 17),)
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          authenticated?Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 20,),
+              Padding(
+                padding: const EdgeInsets.only(left: 30.0,right: 30,top:15,bottom: 5),
+                child: Text("Online Services",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.green,fontSize: 17),),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 30.0,right: 30,top:15,bottom: 5),
+                child:Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Card(
+                      color: Colors.green,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)
+                      ),
+                      elevation: 10,
+                      child: InkWell(
+                        onTap: (){
+                          Navigator.pushNamed(context, "/market");
+                        },
+                        borderRadius: BorderRadius.circular(10),
+                        child: Container(
+                          height: 100,
+                          width: 100,
+                          padding: EdgeInsets.all(10),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.shopping_basket,color: Colors.white,size: 30,),
+                              SizedBox(height: 10,),
+                              Text("Market",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 17),)
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    Card(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)
+                      ),
+                      elevation: 10,
+                      child: InkWell(
+                        onTap: (){
+                          Navigator.pushNamed(context, "/land");
+                        },
+                        borderRadius: BorderRadius.circular(10),
+                        child: Container(
+                          height: 100,
+                          width: 100,
+                          padding: EdgeInsets.all(10),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.location_on,color: Colors.green,size: 30,),
+                              SizedBox(height: 10,),
+                              Text("Land",style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 17),)
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    Card(
+                      color: Colors.green,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)
+                      ),
+                      elevation: 10,
+                      child: InkWell(
+                        onTap: (){
+                          Navigator.pushNamed(context, "/rent");
+                        },
+                        borderRadius: BorderRadius.circular(10),
+                        child: Container(
+                          height: 100,
+                          width: 100,
+                          padding: EdgeInsets.all(10),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.settings,color: Colors.white,size: 30,),
+                              SizedBox(height: 10,),
+                              Text("Tools",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 17),)
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
-            )
-          ],
-        ),
+              Padding(
+                padding: const EdgeInsets.only(left: 30.0,right: 30,top:15,bottom: 5),
+                child:Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Card(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)
+                      ),
+                      elevation: 10,
+                      child: InkWell(
+                        onTap: (){
+                          Navigator.pushNamed(context, "/chat");
+                        },
+                        borderRadius: BorderRadius.circular(10),
+                        child: Container(
+                          height: 100,
+                          width: 100,
+                          padding: EdgeInsets.all(10),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.chat_bubble,color: Colors.green,size: 30,),
+                              SizedBox(height: 10,),
+                              Text("Chat",style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 17),)
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    Card(
+                      color: Colors.white,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)
+                      ),
+                      elevation: 10,
+                      child: InkWell(
+                        onTap: (){},
+                        borderRadius: BorderRadius.circular(10),
+                        child: Container(
+                          height: 100,
+                          width: 100,
+                          padding: EdgeInsets.all(10),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.question_answer,color: Colors.green,size: 30,),
+                              SizedBox(height: 10,),
+                              Text("Post",style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 17),)
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ):SizedBox(),
+          SizedBox(height: 20,),
+          Padding(
+            padding: const EdgeInsets.only(left: 30.0,right: 30,top:15,bottom: 5),
+            child: Text("Common Regional Varieties",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.green,fontSize: 17),),
+          ),
+          SizedBox(
+            width: double.infinity,
+            height: 250,
+            child: ListView(
+              padding: const EdgeInsets.all(10.0),
+              physics: BouncingScrollPhysics(),
+              scrollDirection:Axis.horizontal,
+              children: [
+                SizedBox(width: 20,),
+                InkWell(
+                  onTap: ()async{
+                    print("rice");
+                    var result=await dbObject.getInfo(1);
+                    Navigator.pushNamed(context, "/crop",arguments: result[0]);
+                  },
+                  child: Container(
+                    width: 150,
+                    child: Card(
+                      semanticContainer: true,
+                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                      elevation:6,
+                      child: Stack(
+                        children: [
+                          SizedBox.expand(
+                            child: Image.asset(
+                              "assets/images/Rice.jpg",fit: BoxFit.cover,
+                            ),
+                          ),
+                          Positioned(left: 10,bottom: 15,child: Text("Rice",style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.bold),))
+                        ],
+                      ),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 5,),
+                InkWell(
+                  onTap: ()async{
+                    print("wheat");
+                    var result=await dbObject.getInfo(2);
+                    Navigator.pushNamed(context, "/crop",arguments: result[0]);
+                  },
+                  child: Container(
+                    width: 150,
+                    child: Card(
+                      semanticContainer: true,
+                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                      elevation:6,
+                      child: Stack(
+                        children: [
+                          SizedBox.expand(
+                            child: Image.asset(
+                              "assets/images/Wheat.jpg",fit: BoxFit.cover,
+                            ),
+                          ),
+                          Positioned(left: 10,bottom: 15,child: Text("Wheat",style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.bold),))
+                        ],
+                      ),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 5,),
+                InkWell(
+                  onTap: ()async{
+                    print("Sugarcane");
+                    var result=await dbObject.getInfo(3);
+                    Navigator.pushNamed(context, "/crop",arguments: result[0]);
+                  },
+                  child: Container(
+                    width: 150,
+                    child: Card(
+                      semanticContainer: true,
+                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                      elevation:6,
+                      child: Stack(
+                        children: [
+                          SizedBox.expand(
+                            child: Image.asset(
+                              "assets/images/Sugarcane.jpg",fit: BoxFit.cover,
+                            ),
+                          ),
+                          Positioned(left: 10,bottom: 15,child: Text("Sugarcane",style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.bold),))
+                        ],
+                      ),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 5,),
+                InkWell(
+                  onTap: ()async{
+                    print("corn");
+                    var result=await dbObject.getInfo(4);
+                    Navigator.pushNamed(context, "/crop",arguments: result[0]);
+                  },
+                  child: Container(
+                    width: 150,
+                    child: Card(
+                      semanticContainer: true,
+                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                      elevation:6,
+                      child: Stack(
+                        children: [
+                          SizedBox.expand(
+                            child: Image.asset(
+                              "assets/images/Corn.jpg",fit: BoxFit.cover,
+                            ),
+                          ),
+                          Positioned(left: 10,bottom: 15,child: Text("Corn",style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.bold),))
+                        ],
+                      ),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 5,),
+              ],
+            ),
+          ),
+          SizedBox(height: 80,)
+        ],
       ),
     );
   }
