@@ -1,5 +1,6 @@
 import 'package:agri_app/pages/Crop.dart';
 import 'package:agri_app/pages/addNewCrop.dart';
+import 'package:agri_app/pages/addNewDoubt.dart';
 import 'package:agri_app/pages/addNewEvent.dart';
 import 'package:agri_app/pages/addNewLand.dart';
 import 'package:agri_app/pages/addNewTool.dart';
@@ -13,6 +14,8 @@ import 'package:agri_app/pages/editEvent.dart';
 import 'package:agri_app/pages/home.dart';
 import 'package:agri_app/pages/initial.dart';
 import 'package:agri_app/pages/mainHome.dart';
+import 'package:agri_app/pages/myDoubt.dart';
+import 'package:agri_app/pages/myQueries.dart';
 import 'package:agri_app/pages/newHome.dart';
 import 'package:agri_app/pages/land.dart';
 import 'package:agri_app/pages/login.dart';
@@ -28,9 +31,13 @@ import 'package:agri_app/pages/userItems.dart';
 import 'package:agri_app/pages/userLands.dart';
 import 'package:agri_app/pages/userTools.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 void main() {
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    statusBarColor: Colors.green, // status bar color
+  ));
   runApp(MyApp());
 }
 
@@ -99,8 +106,11 @@ class _MyAppState extends State<MyApp> {
         "/showCommunity":(context) => ShowCommunity(),
         "/recommendationResult":(context) => RecommendationResult(argument: ModalRoute.of(context)!.settings.arguments as Map,),
         "/doubt":(context) => Doubt(arguments: ModalRoute.of(context)!.settings.arguments as Map,),
+        "/addNewDoubt":(context) => AddNewDoubt(),
+        "/myQueries":(context) => MyQueries(),
+        "/myDoubt":(context) => MyDoubt(arguments: ModalRoute.of(context)!.settings.arguments as Map,),
       },
-      initialRoute: "/showCommunity",
+      initialRoute: "/init",
     );
   }
 }

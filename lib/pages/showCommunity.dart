@@ -1,6 +1,7 @@
 import 'package:agri_app/services/askService.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ShowCommunity extends StatefulWidget {
   const ShowCommunity({Key? key}) : super(key: key);
@@ -16,18 +17,22 @@ class _ShowCommunityState extends State<ShowCommunity> {
   String txt="Loading";
   AskService askService = AskService();
   DateFormat dateFormat = DateFormat("dd/MM/yyyy hh:mm a");
+  late SharedPreferences sharedPreference;
 
   @override
   void initState() {
-    load();
+    loadSP();
     super.initState();
   }
 
+  void loadSP()async{
+    sharedPreference = await SharedPreferences.getInstance();
+    load();
+  }
+
   void load()async{
-    setState(() {
-      loading=true;
-    });
-    result = await askService.showCommunity();
+    setState(() {});
+    result = await askService.showCommunity(phone: sharedPreference.getString("phone"));
     if(result=="error"){
       setState(() {
         txt="Something went wrong";
@@ -50,9 +55,14 @@ class _ShowCommunityState extends State<ShowCommunity> {
       appBar: AppBar(
         title: Text("Ask in Community"),
         elevation: 0,
+        actions: [
+          IconButton(onPressed: (){
+            Navigator.pushNamed(context, "/myQueries");
+          }, icon: Icon(Icons.history))
+        ],
       ),
       floatingActionButton: FloatingActionButton.extended(onPressed: (){
-
+        Navigator.pushNamed(context, "/addNewDoubt");
       }, icon: Icon(Icons.edit),label: Text("Ask Community")),
       body: loading?Center(
         child: Column(
@@ -63,17 +73,23 @@ class _ShowCommunityState extends State<ShowCommunity> {
             Text(txt)
           ],
         ),
-      ):ListView.builder(
-          padding: EdgeInsets.all(5),
+      ):result.length==0?Center(
+        child: Text('Nothing to show',style: TextStyle(color: Colors.grey),),
+      )
+          :ListView.builder(
+          padding: EdgeInsets.only(left: 5,right: 5,top: 10,bottom: 50),
           itemCount: result.length,
           itemBuilder: (context,index) {
             return GestureDetector(
-              onTap: (){
-                Navigator.pushNamed(context, "/doubt",arguments: {"id":result[index]["id"],"username":result[index]["username"],"district":result[index]["district"],
+              onTap: ()async{
+                await Navigator.pushNamed(context, "/doubt",arguments: {"resolved":result[index]["resolved"],"phone":sharedPreference.getString("phone"),"id":result[index]["id"],"username":result[index]["username"],"district":result[index]["district"],
                   "query":result[index]["query"],"datetime":result[index]["datetime"],"answers":result[index]["answers"],
                   "description":result[index]["description"],"pic":result[index]["pic"]});
-              },
+                loading=true;
+                load();
+                },
               child: Container(
+                margin: EdgeInsets.only(bottom: 10),
                 clipBehavior: Clip.hardEdge,
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -91,10 +107,10 @@ class _ShowCommunityState extends State<ShowCommunity> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(height: 200,decoration: BoxDecoration(
-                        image: DecorationImage(
-                          fit: BoxFit.cover,
-                          image: NetworkImage(result[index]["pic"])
-                        )
+                          image: DecorationImage(
+                              fit: BoxFit.cover,
+                              image: NetworkImage(result[index]["pic"])
+                          )
                       ),
                         child: Padding(
                           padding: const EdgeInsets.only(right: 12.0,top: 10),
@@ -103,8 +119,8 @@ class _ShowCommunityState extends State<ShowCommunity> {
                             child: Container(
                               padding: EdgeInsets.symmetric(vertical: 5,horizontal: 12),
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(50),
-                                color: Colors.white
+                                  borderRadius: BorderRadius.circular(50),
+                                  color: Colors.white
                               ),
                               child: Text("${result[index]["answers"]} Answers"),
                             ),
@@ -139,10 +155,15 @@ class _ShowCommunityState extends State<ShowCommunity> {
                           ],
                         ),
                       ),
-                      SizedBox(height: 10,),
-                      Padding(padding: EdgeInsets.only(left: 10),child: Text(result[index]["query"],style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),),
                       SizedBox(height: 5,),
-                      Padding(padding: EdgeInsets.only(left: 10),child: Text(result[index]["description"],style: TextStyle(fontSize: 17),),),
+                      result[index]["resolved"]==null?SizedBox():Padding(
+                        padding: const EdgeInsets.symmetric(horizontal:10),
+                        child: Text("Resolved",style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold),),
+                      ),
+                      SizedBox(height: 10,),
+                      Padding(padding: EdgeInsets.symmetric(horizontal: 10),child: Text(result[index]["query"],style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),),
+                      SizedBox(height: 5,),
+                      Padding(padding: EdgeInsets.symmetric(horizontal: 10),child: Text(result[index]["description"],style: TextStyle(fontSize: 17),),),
                       SizedBox(height: 20,)
                     ],
                   ),

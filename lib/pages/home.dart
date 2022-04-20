@@ -398,14 +398,14 @@ class _HomeState extends State<Home> {
                 Navigator.pushNamed(context, "/chooseHome");
               },
             ),
-            authenticated?ListTile(
+            ListTile(
               leading: Icon(Icons.calendar_today_rounded),
               title: Text("Event Scheduler"),
               onTap: (){
                 Navigator.pop(context);
                 Navigator.pushNamed(context, "/calendar",arguments: {"db":dbObject});
               },
-            ):Container(),
+            ),
             authenticated?ListTile(
               leading: Icon(Icons.shopping_cart_rounded),
               title: Text("Market Place"),
@@ -458,6 +458,11 @@ class _HomeState extends State<Home> {
         fabOpenIcon: Icon(Icons.lightbulb,color: Colors.white,),
         fabCloseIcon: Icon(Icons.close,color: Colors.white,),
         children: <Widget>[
+          IconButton(tooltip: "Ask in Community",color: Colors.white,splashColor: Colors.transparent,focusColor: Colors.transparent,highlightColor: Colors.transparent,icon: Icon(Icons.question_answer), onPressed: authenticated?() {
+            print('Ask in Community');
+            fabKey.currentState!.close();
+            Navigator.pushNamed(context, "/showCommunity");
+          }:null,),
           IconButton(tooltip: "Community Chat",color: Colors.white,splashColor: Colors.transparent,focusColor: Colors.transparent,highlightColor: Colors.transparent,icon: Icon(Icons.message), onPressed: authenticated?() {
             print('Community Chat');
             fabKey.currentState!.close();

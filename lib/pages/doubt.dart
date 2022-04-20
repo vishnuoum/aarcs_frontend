@@ -1,3 +1,4 @@
+import 'package:agri_app/services/askService.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -13,21 +14,83 @@ class Doubt extends StatefulWidget {
 
 class _DoubtState extends State<Doubt> {
 
-  bool loading = true;
-  dynamic result=[{"id":"1","username":"Hello","district":"Thrissur","datetime":"2021/01/20","answer":"Hello"},
-    {"id":"1","username":"Hello","district":"Thrissur","datetime":"2021/01/20","answer":"Hello"},
-    {"id":"1","username":"Hello","district":"Thrissur","datetime":"2021/01/20","answer":"Hello"}];
+  bool loading = true,sendEnabled=false;
+  String txt="Loading";
+  dynamic result=[];
   DateFormat dateFormat = DateFormat("dd/MM/yyyy hh:mm a");
+  AskService askService = AskService();
+  TextEditingController answerField = TextEditingController(text: "");
 
   @override
   initState() {
+    load();
     super.initState();
   }
 
+  void load()async{
+    setState(() {});
+    result = await askService.answers(phone: widget.arguments["phone"], id: widget.arguments["id"].toString());
+    if(result=="error"){
+      setState(() {
+        txt="Something went wrong";
+      });
+      Future.delayed(Duration(seconds: 5),(){
+        load();
+      });
+    }
+    else{
+      setState(() {
+        loading=false;
+        txt="Loading";
+      });
+    }
+  }
 
-  @override
-  void dispose() {
-    super.dispose();
+  showLoading(BuildContext context){
+    AlertDialog alert =AlertDialog(
+      content: SizedBox(
+        height: 80,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(height: 50,width: 50,child: CircularProgressIndicator(strokeWidth: 5,valueColor: AlwaysStoppedAnimation(Colors.green),),),
+            SizedBox(height: 10,),
+            Text("Loading")
+          ],
+        ),
+      ),
+    );
+
+    showDialog(context: context,builder:(BuildContext context){
+      return WillPopScope(onWillPop: ()async => false,child: alert);
+    });
+  }
+
+  Future<void> alertDialog(var text) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Alert'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text(text),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Ok'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -36,8 +99,6 @@ class _DoubtState extends State<Doubt> {
       appBar: AppBar(
         title: Text("Answer the Query"),
       ),
-      extendBodyBehindAppBar: true,
-      extendBody: true,
       body: Container(
         decoration: BoxDecoration(
           color: Colors.green[100]
@@ -88,7 +149,16 @@ class _DoubtState extends State<Doubt> {
                   child: Text("Responses",style: TextStyle(color: Colors.green[800],fontSize: 17,fontWeight: FontWeight.bold),),
                 ),
                 SizedBox(height: 10,),
-                ListView.separated(
+                loading?Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(height: 50,width: 50,child: CircularProgressIndicator(strokeWidth: 5,valueColor: AlwaysStoppedAnimation(Colors.green),),),
+                      SizedBox(height: 10,),
+                      Text(txt)
+                    ],
+                  ),
+                ):ListView.separated(
                   padding: EdgeInsets.only(bottom: 100),
                   shrinkWrap: true,
                     separatorBuilder: (context, index) {
@@ -98,6 +168,7 @@ class _DoubtState extends State<Doubt> {
                   itemCount: result.length,
                   itemBuilder: (context, index) {
                     return Container(
+                      color: widget.arguments["resolved"].toString()==result[index]["id"].toString()?Colors.green[200]:Colors.transparent,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -108,8 +179,16 @@ class _DoubtState extends State<Doubt> {
                               foregroundColor: Colors.white,
                               child: Icon(Icons.person),
                             ),
-                            title: Text(result[index]["username"]),
-                            subtitle: Text(result[index]["datetime"]),
+                            title: Row(
+                              children: [
+                                Text(result[index]["username"],style: TextStyle(fontWeight: FontWeight.bold),),
+                                SizedBox(width:5),
+                                CircleAvatar(radius: 3,backgroundColor: Colors.green,),
+                                SizedBox(width:5),
+                                Text(result[index]["district"],style: TextStyle(fontWeight: FontWeight.bold),),
+                              ],
+                            ),
+                            subtitle: Text(dateFormat.format(DateTime.parse(result[index]["datetime"])).toString(),)
                           ),
                           Padding(padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
                           child: Text(result[index]["answer"],style: TextStyle(fontSize: 17),),)
@@ -140,15 +219,44 @@ class _DoubtState extends State<Doubt> {
                           color: Colors.green[200]
                       ),
                       child: TextField(
+                        controller: answerField,
                         maxLines: null,
                         decoration: InputDecoration(
                           hintText: "Write your response",
                           border: InputBorder.none
                         ),
+                        onChanged: (val){
+                          if(val.length!=0){
+                            setState(() {
+                              sendEnabled=true;
+                            });
+                          }
+                          else{
+                            setState(() {
+                              sendEnabled=false;
+                            });
+                          }
+                        },
                       ),
                     )),
                     SizedBox(width: 10,),
-                    Expanded(child: IconButton(onPressed: null,icon: Icon(Icons.send),color: Colors.green,))
+                    Expanded(child: IconButton(onPressed: sendEnabled?()async{
+                      FocusScope.of(context).unfocus();
+                      showLoading(context);
+                      var res= await askService.postAnswer(phone: widget.arguments["phone"], id: widget.arguments["id"].toString(), answer: answerField.text);
+                      Navigator.pop(context);
+                      if(res=="done"){
+                        sendEnabled=false;
+                        answerField.clear();
+                        setState(() {
+                          loading=true;
+                        });
+                        load();
+                      }
+                      else{
+                        alertDialog("Something went wrong. Try again");
+                      }
+                    }:null,icon: Icon(Icons.send),color: Colors.green,))
                   ],
                 ),
               ),

@@ -713,7 +713,9 @@ class _Home2State extends State<Home2> {
                       ),
                       elevation: 10,
                       child: InkWell(
-                        onTap: (){},
+                        onTap: (){
+                          Navigator.pushNamed(context, "/showCommunity");
+                        },
                         borderRadius: BorderRadius.circular(10),
                         child: Container(
                           height: 100,
