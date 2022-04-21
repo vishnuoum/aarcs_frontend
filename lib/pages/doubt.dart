@@ -108,13 +108,21 @@ class _DoubtState extends State<Doubt> {
           children: [
             ListView(
               children: [
-                Container(
-                  height: 200,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: NetworkImage(widget.arguments["pic"]),
-                      fit: BoxFit.cover
-                    )
+                GestureDetector(
+                  onTap: (){
+                    Navigator.pushNamed(context, "/viewPic",arguments: {"pic":widget.arguments["pic"]});
+                  },
+                  child: Hero(
+                    tag: "1",
+                    child: Container(
+                      height: 200,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: NetworkImage(widget.arguments["pic"]),
+                          fit: BoxFit.cover
+                        )
+                      ),
+                    ),
                   ),
                 ),
                 SizedBox(height: 10,),

@@ -30,6 +30,7 @@ import 'package:agri_app/pages/signup.dart';
 import 'package:agri_app/pages/userItems.dart';
 import 'package:agri_app/pages/userLands.dart';
 import 'package:agri_app/pages/userTools.dart';
+import 'package:agri_app/pages/viewPic.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
@@ -109,6 +110,7 @@ class _MyAppState extends State<MyApp> {
         "/addNewDoubt":(context) => AddNewDoubt(),
         "/myQueries":(context) => MyQueries(),
         "/myDoubt":(context) => MyDoubt(arguments: ModalRoute.of(context)!.settings.arguments as Map,),
+        "/viewPic":(context) => ViewPic(arguments: ModalRoute.of(context)!.settings.arguments as Map,),
       },
       initialRoute: "/init",
     );
