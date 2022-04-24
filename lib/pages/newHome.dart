@@ -11,6 +11,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tflite/tflite.dart';
@@ -407,7 +408,12 @@ class _Home2State extends State<Home2> {
               onTap: ()async{
                 Navigator.pop(context);
                 await sharedPreferences.remove("phone");
-                setState(() {});
+                setState(() {
+                  authenticated=false;
+                  authentication=false;
+                });
+                OneSignal.shared.removeExternalUserId();
+                checkLogin();
               },
             ):Container(),
           ],
@@ -421,7 +427,7 @@ class _Home2State extends State<Home2> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Text(weather,style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 16),),
+                authenticated?Text(weather,style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 16),):SizedBox(),
                 SizedBox(width: 15,),
                 IconButton(icon: Icon(Icons.menu_open),onPressed: (){
                   _scaffoldKey.currentState!.openEndDrawer();

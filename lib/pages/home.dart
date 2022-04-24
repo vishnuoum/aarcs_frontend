@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tflite/tflite.dart';
@@ -357,9 +358,9 @@ class _HomeState extends State<Home> {
         backgroundColor: Colors.white,
         elevation: 0,
         actions: [
-          Row(children: [
+          authenticated?Row(children: [
             Text(weather,style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold),)
-          ],),
+          ],):SizedBox(),
           SizedBox(width: 10,)
         ],
         iconTheme: IconThemeData(
@@ -444,7 +445,12 @@ class _HomeState extends State<Home> {
               onTap: ()async{
                 Navigator.pop(context);
                 await sharedPreferences.remove("phone");
-                setState(() {});
+                setState(() {
+                  authenticated=false;
+                  authentication=false;
+                });
+                OneSignal.shared.removeExternalUserId();
+                checkLogin();
                },
             ):Container(),
           ],

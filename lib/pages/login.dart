@@ -1,6 +1,7 @@
 import 'package:agri_app/services/loginService.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Login extends StatefulWidget {
@@ -205,9 +206,14 @@ class _LoginState extends State<Login> {
                   var result=await loginService.login(phone: phone.text, password: password.text);
                   if(result=="done"){
                     await sharedPreferences.setString("phone", phone.text);
+                    OneSignal.shared.setExternalUserId(phone.text).then((results) {
+                      print(results.toString());
+                    }).catchError((error) {
+                      print(error.toString());
+                    });
                     Navigator.pop(context);
                     Navigator.pop(context);
-                    Navigator.pushReplacementNamed(context, "/");
+                    Navigator.pushReplacementNamed(context, "/init");
                   }
                   else if(result=="netError"){
                     Navigator.pop(context);

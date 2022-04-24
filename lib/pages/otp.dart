@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:agri_app/services/loginService.dart';
 import 'package:flutter/material.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/otp_field_style.dart';
 import 'package:otp_text_field/style.dart';
@@ -148,10 +149,15 @@ class _OTPState extends State<OTP> {
                     var result=await loginService.signup(name: widget.arguments["name"], phone: widget.arguments["phone"], place: widget.arguments["place"], district: widget.arguments["district"], password: widget.arguments["password"], otp: otp);
                     if(result=="done"){
                       await sharedPreferences.setString("phone", widget.arguments["phone"]);
+                      OneSignal.shared.setExternalUserId(widget.arguments["phone"]).then((results) {
+                        print(results.toString());
+                      }).catchError((error) {
+                        print(error.toString());
+                      });
                       Navigator.pop(context);
                       Navigator.pop(context);
                       Navigator.pop(context);
-                      Navigator.pushReplacementNamed(context,"/");
+                      Navigator.pushReplacementNamed(context,"/init");
                     }
                     else if(result=="otp error"){
                       Navigator.pop(context);
