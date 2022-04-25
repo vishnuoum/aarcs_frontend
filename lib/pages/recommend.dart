@@ -1,6 +1,7 @@
 import 'package:agri_app/services/decisionTree.dart';
 import 'package:agri_app/services/recommendationService.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class Recommend extends StatefulWidget {
   const Recommend({Key? key}) : super(key: key);
@@ -11,7 +12,8 @@ class Recommend extends StatefulWidget {
 
 class _RecommendState extends State<Recommend> {
 
-
+  Map logs={"logs":[]};
+  DateFormat format = DateFormat("dd/MM/yyyy hh:mm:ss a");
 
   TextEditingController N=TextEditingController();
   TextEditingController K=TextEditingController();
@@ -83,6 +85,8 @@ class _RecommendState extends State<Recommend> {
 
   @override
   Widget build(BuildContext context) {
+    if(logs["logs"].length==0 && ModalRoute.of(context)!.settings.arguments !=null)
+      logs = ModalRoute.of(context)!.settings.arguments as Map;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -269,7 +273,9 @@ class _RecommendState extends State<Recommend> {
             SizedBox(height: 15,),
             TextButton(onPressed: ()async{
               FocusScope.of(context).unfocus();
+              logs["logs"].add("${format.format(DateTime.now())} Recommendation Service started!!!");
               if(N.text.length!=0 && P.text.length!=0 && K.text.length!=0 && temperature.text.length!=0 && rainfall.text.length!=0 && ph.text.length!=0 && humidity.text.length!=0) {
+                logs["logs"].add("${format.format(DateTime.now())} Preprocessing.....");
                 if(!(double.parse(N.text)>=0 &&  double.parse(N.text)<=150)){
                   alertDialog("Alert", "Please check your nitrogen content value. As for the study it ranges between 0-150 Kg/ha");
                   return;
@@ -290,18 +296,23 @@ class _RecommendState extends State<Recommend> {
                   alertDialog("Alert", "Please fill the Ph value correctly. pH value ranges from 0 - 14.");
                   return;
                 }
+                logs["logs"].add("${format.format(DateTime.now())} Preprocessing completed!!!");
                 showLoading(context);
                 // var result=await recommendationService.recommend(N: N.text, K: K.text, P: P.text, temperature: temperature.text, rainfall: rainfall.text, ph: ph.text, humidity: humidity.text);
+                logs["logs"].add("${format.format(DateTime.now())} Loading Decision Tree model.....");
                 DecisionTreeClassifier DT=DecisionTreeClassifier();
+                logs["logs"].add("${format.format(DateTime.now())} Loaded Decision Tree model!!!");
                 var result=await DT.predict(features: [N.text,K.text,P.text,temperature.text,humidity.text,ph.text,rainfall.text]);
                 Navigator.pop(context);
                 if(result=="error"){
+                  logs["logs"].add("${format.format(DateTime.now())} Error thrown.....");
                   alertDialog("Alert", 'Something went wrong. Please try again later.');
                 }
                 else if(result=="netError"){
                   alertDialog("Alert", "Please check your network connection and try again.");
                 }
                 else{
+                  logs["logs"].add("${format.format(DateTime.now())} Result=$result");
                   Navigator.pushNamed(context, "/recommendationResult",arguments:{"result":result,"temp":temperature.text,"N":N.text,"P":P.text,"K":K.text,"humidity":humidity.text,"rainfall":rainfall.text,"ph":ph.text,"crop":cropName=="Select a crop for checking (optional)"?null:cropName});
                   N.clear();K.clear();P.clear();temperature.clear();
                   ph.clear();humidity.clear();rainfall.clear();

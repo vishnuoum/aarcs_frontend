@@ -11,6 +11,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -28,7 +29,6 @@ class _Home1State extends State<Home1> {
 
   final GlobalKey<FabCircularMenuState> fabKey = GlobalKey();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  DateTime start = DateTime.now();
 
   late SharedPreferences sharedPreferences;
   final ImagePicker _picker = ImagePicker();
@@ -36,6 +36,8 @@ class _Home1State extends State<Home1> {
   late DBService dbObject;
   WeatherService weatherService=WeatherService();
   String weather="";
+  List logs=[];
+  DateFormat format = DateFormat("dd/MM/yyyy hh:mm:ss a");
 
   AnalyticsService analyticsService=AnalyticsService();
   late PaletteGenerator paletteGenerator;
@@ -83,10 +85,12 @@ class _Home1State extends State<Home1> {
   }
 
   void weatherApi()async{
+    logs.add("${format.format(DateTime.now())} Fetching Weather.....");
     if(sharedPreferences.containsKey("phone")) {
       var result = await weatherService.getWeather(
           phone: sharedPreferences.getString("phone"));
       if (result != "error") {
+        logs.add("${format.format(DateTime.now())} Loading Weather.....");
         weather =
         "${(result["main"]["temp"] - 273).toStringAsFixed(2)}°C  ${capitalize(
             result["weather"][0]["description"])}";
@@ -96,6 +100,7 @@ class _Home1State extends State<Home1> {
   }
 
   Future<void> checkLogin()async{
+    logs.add("${format.format(DateTime.now())} Connecting to server for authentication.....");
     try {
       if (sharedPreferences.containsKey("phone")) {
         if (!authentication) {
@@ -106,6 +111,7 @@ class _Home1State extends State<Home1> {
         var result = await loginService.authenticate(
             phone: sharedPreferences.getString("phone").toString());
         if (result == "done") {
+          logs.add("${format.format(DateTime.now())} Authenticating.....");
           weatherApi();
           setState(() {
             authentication = false;
@@ -129,6 +135,7 @@ class _Home1State extends State<Home1> {
 
 
   void loadLeafModel()async{
+    logs.add("${format.format(DateTime.now())} Loading Leaf Model.....");
     res = await Tflite.loadModel(
         model: "assets/model.tflite",
         labels: "assets/labels.txt",
@@ -137,9 +144,11 @@ class _Home1State extends State<Home1> {
         useGpuDelegate: false // defaults to false, set to true to use GPU delegate
     );
     print(res);
+    logs.add("${format.format(DateTime.now())} Loaded Leaf Model!!!");
   }
 
   void loadSeedlingModel()async{
+    logs.add("${format.format(DateTime.now())} Loading Seedling Model.....");
     res = await Tflite.loadModel(
         model: "assets/model_seedling.tflite",
         labels: "assets/labels_seedling.txt",
@@ -148,6 +157,7 @@ class _Home1State extends State<Home1> {
         useGpuDelegate: false // defaults to false, set to true to use GPU delegate
     );
     print(res);
+    logs.add("${format.format(DateTime.now())} Loaded Seedling Model!!!");
   }
 
 
@@ -180,6 +190,7 @@ class _Home1State extends State<Home1> {
 
 
   Future<void> leafScan(BuildContext cont) async {
+    logs.add("${format.format(DateTime.now())} Initiating Leaf Scan.....");
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
@@ -198,6 +209,7 @@ class _Home1State extends State<Home1> {
             TextButton(
               child: Text('Open Camera'),
               onPressed: () async{
+                logs.add("${format.format(DateTime.now())} Opening Camera.....");
                 Navigator.of(context).pop();
                 print('Leaf Camera');
                 final XFile? image = await _picker.pickImage(source: ImageSource.camera);
@@ -207,6 +219,7 @@ class _Home1State extends State<Home1> {
                     path: image.path,   // required
                   );
                   print(recognitions);
+                  logs.add("${format.format(DateTime.now())} ${recognitions.toString()}");
                   if(recognitions![0]["confidence"]<0.85){
                     alertDialog("Could not find the leaf in the image.");
                     return;
@@ -231,12 +244,14 @@ class _Home1State extends State<Home1> {
                 }
                 catch(e){
                   print("Exception $e");
+                  logs.add("${format.format(DateTime.now())} Exception $e");
                 }
               },
             ),
             TextButton(
               child: Text('Open Gallery'),
               onPressed: ()async {
+                logs.add("${format.format(DateTime.now())} Opening Gallery.....");
                 Navigator.of(context).pop();
                 print('Leaf Gallery');
                 final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
@@ -246,6 +261,7 @@ class _Home1State extends State<Home1> {
                     path: image.path,   // required
                   );
                   print(recognitions);
+                  logs.add("${format.format(DateTime.now())} ${recognitions.toString()}");
                   if(recognitions![0]["confidence"]<0.85){
                     alertDialog("Could not find the leaf in the image.");
                     return;
@@ -269,6 +285,7 @@ class _Home1State extends State<Home1> {
                 }
                 catch(e){
                   print("Exception $e");
+                  logs.add("${format.format(DateTime.now())} Exception $e");
                 }
               },
             ),
@@ -280,6 +297,7 @@ class _Home1State extends State<Home1> {
 
 
   Future<void> seedlingScan(BuildContext cont) async {
+    logs.add("${format.format(DateTime.now())} Initiating Seedling Scan.....");
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
@@ -298,6 +316,7 @@ class _Home1State extends State<Home1> {
             TextButton(
               child: Text('Open Camera'),
               onPressed: () async{
+                logs.add("${format.format(DateTime.now())} Opening Camera.....");
                 Navigator.of(context).pop();
                 print('Seedling Camera');
                 final XFile? image = await _picker.pickImage(source: ImageSource.camera);
@@ -306,6 +325,7 @@ class _Home1State extends State<Home1> {
                   var recognitions = await Tflite.runModelOnImage(
                     path: image.path,   // required
                   );
+                  logs.add("${format.format(DateTime.now())} ${recognitions.toString()}");
                   if(recognitions![0]["confidence"]<0.85){
                     alertDialog("Could not find seedling in the image.");
                     return;
@@ -315,12 +335,14 @@ class _Home1State extends State<Home1> {
                 }
                 catch(e){
                   print("Exception $e");
+                  logs.add("${format.format(DateTime.now())} Exception $e");
                 }
               },
             ),
             TextButton(
               child: Text('Open Gallery'),
               onPressed: () async{
+                logs.add("${format.format(DateTime.now())} Opening Gallery.....");
                 Navigator.of(context).pop();
                 print('Seedling Gallery');
                 final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
@@ -329,6 +351,7 @@ class _Home1State extends State<Home1> {
                   var recognitions = await Tflite.runModelOnImage(
                     path: image.path,   // required
                   );
+                  logs.add("${format.format(DateTime.now())} ${recognitions.toString()}");
                   if(recognitions![0]["confidence"]<0.85){
                     alertDialog("Could not find seedling in the image.");
                     return;
@@ -338,6 +361,7 @@ class _Home1State extends State<Home1> {
                 }
                 catch(e){
                   print("Exception $e");
+                  logs.add("${format.format(DateTime.now())} Exception $e");
                 }
               },
             ),
@@ -391,7 +415,7 @@ class _Home1State extends State<Home1> {
               title: Text("Logs"),
               onTap: ()async{
                 Navigator.pop(context);
-                await canLaunch("mailto:agri-app@gmail.com?subject=Agri%20App&body=New%20plugin") ? await launch("mailto:agri-app@gmail.com?subject=Agri%20App&body=New%20plugin") : throw 'Could not launch gmail';
+                Navigator.pushNamed(context, "/logs",arguments: {"logs":logs});
               },
             ),
             ListTile(
@@ -564,7 +588,7 @@ class _Home1State extends State<Home1> {
                             elevation: 10,
                             child: InkWell(
                               onTap: (){
-                                Navigator.pushNamed(context, "/recommend");
+                                Navigator.pushNamed(context, "/recommend",arguments: {"logs":logs});
                               },
                               borderRadius: BorderRadius.circular(10),
                               child: Container(

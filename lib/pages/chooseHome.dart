@@ -77,7 +77,7 @@ class _ChooseHomeState extends State<ChooseHome> {
               GestureDetector(
                 onTap: (){
                   setState(() {
-                    home="home1";
+                    home="home2";
                   });
                 },
                 child: Column(
@@ -86,9 +86,9 @@ class _ChooseHomeState extends State<ChooseHome> {
                         padding: EdgeInsets.all(5),
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(15),
-                            border: Border.all(color: home=="home1"?Colors.green:Colors.transparent,width: 3)
+                            border: Border.all(color: home=="home2"?Colors.green:Colors.transparent,width: 3)
                         ),
-                        child: Image.asset("assets/images/home2.png",width: 150,)),
+                        child: Image.asset("assets/images/home3.png",width: 150,)),
                     SizedBox(height: 12,),
                     Text("Home 2",style: TextStyle(color: Colors.green,fontSize: 17,fontWeight: FontWeight.bold),)
                   ],
@@ -103,7 +103,7 @@ class _ChooseHomeState extends State<ChooseHome> {
               GestureDetector(
                 onTap: (){
                   setState(() {
-                    home="home2";
+                    home="home1";
                   });
                 },
                 child: Column(
@@ -112,11 +112,11 @@ class _ChooseHomeState extends State<ChooseHome> {
                         padding: EdgeInsets.all(5),
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(15),
-                            border: Border.all(color: home=="home2"?Colors.green:Colors.transparent,width: 3)
+                            border: Border.all(color: home=="home1"?Colors.green:Colors.transparent,width: 3)
                         ),
-                        child: Image.asset("assets/images/home3.png",width: 150,)),
+                        child: Image.asset("assets/images/home2.png",width: 150,)),
                     SizedBox(height: 12,),
-                    Text("Home 3",style: TextStyle(color: Colors.green,fontSize: 17,fontWeight: FontWeight.bold),)
+                    Text("Debug Mode",style: TextStyle(color: Colors.green,fontSize: 17,fontWeight: FontWeight.bold),)
                   ],
                 ),
               ),

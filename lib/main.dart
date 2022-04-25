@@ -13,6 +13,7 @@ import 'package:agri_app/pages/doubt.dart';
 import 'package:agri_app/pages/editEvent.dart';
 import 'package:agri_app/pages/home.dart';
 import 'package:agri_app/pages/initial.dart';
+import 'package:agri_app/pages/logs.dart';
 import 'package:agri_app/pages/mainHome.dart';
 import 'package:agri_app/pages/myDoubt.dart';
 import 'package:agri_app/pages/myQueries.dart';
@@ -111,6 +112,7 @@ class _MyAppState extends State<MyApp> {
         "/myQueries":(context) => MyQueries(),
         "/myDoubt":(context) => MyDoubt(arguments: ModalRoute.of(context)!.settings.arguments as Map,),
         "/viewPic":(context) => ViewPic(arguments: ModalRoute.of(context)!.settings.arguments as Map,),
+        "/logs":(context) => LOGS(),
       },
       initialRoute: "/init",
     );

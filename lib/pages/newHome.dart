@@ -387,14 +387,6 @@ class _Home2State extends State<Home2> {
               },
             ),
             ListTile(
-              leading: Icon(Icons.description),
-              title: Text("Logs"),
-              onTap: ()async{
-                Navigator.pop(context);
-                await canLaunch("mailto:agri-app@gmail.com?subject=Agri%20App&body=New%20plugin") ? await launch("mailto:agri-app@gmail.com?subject=Agri%20App&body=New%20plugin") : throw 'Could not launch gmail';
-              },
-            ),
-            ListTile(
               leading: Icon(Icons.person),
               title: Text("Contact Us"),
               onTap: ()async{
