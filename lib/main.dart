@@ -4,7 +4,6 @@ import 'package:agri_app/pages/addNewDoubt.dart';
 import 'package:agri_app/pages/addNewEvent.dart';
 import 'package:agri_app/pages/addNewLand.dart';
 import 'package:agri_app/pages/addNewTool.dart';
-import 'package:agri_app/pages/askCommunity.dart';
 import 'package:agri_app/pages/calendar.dart';
 import 'package:agri_app/pages/changePassword.dart';
 import 'package:agri_app/pages/chat.dart';
@@ -26,6 +25,7 @@ import 'package:agri_app/pages/profile.dart';
 import 'package:agri_app/pages/recommend.dart';
 import 'package:agri_app/pages/recommended.dart';
 import 'package:agri_app/pages/rent.dart';
+import 'package:agri_app/pages/results.dart';
 import 'package:agri_app/pages/showCommunity.dart';
 import 'package:agri_app/pages/signup.dart';
 import 'package:agri_app/pages/userItems.dart';
@@ -113,6 +113,7 @@ class _MyAppState extends State<MyApp> {
         "/myDoubt":(context) => MyDoubt(arguments: ModalRoute.of(context)!.settings.arguments as Map,),
         "/viewPic":(context) => ViewPic(arguments: ModalRoute.of(context)!.settings.arguments as Map,),
         "/logs":(context) => LOGS(),
+        "/results":(context) => Result(arguments: ModalRoute.of(context)!.settings.arguments as Map,),
       },
       initialRoute: "/init",
     );

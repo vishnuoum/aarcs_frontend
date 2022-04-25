@@ -239,7 +239,8 @@ class _Home1State extends State<Home1> {
                     var result = await dbObject.getDisease(
                         recognitions[0]["index"] + 1);
                     await dbObject.addDiseaseAnalytics(recognitions[0]["index"] );
-                    Navigator.pushNamed(cont, "/crop", arguments: result[0]);
+                    // Navigator.pushNamed(cont, "/crop", arguments: result[0]);
+                    Navigator.pushNamed(cont, "/results", arguments: {"result":recognitions,"type":"disease","obj":dbObject});
                   }
                 }
                 catch(e){
@@ -280,7 +281,8 @@ class _Home1State extends State<Home1> {
                     }
                     var result = await dbObject.getDisease(
                         recognitions[0]["index"] + 1);
-                    Navigator.pushNamed(cont, "/crop", arguments: result[0]);
+                    // Navigator.pushNamed(cont, "/crop", arguments: result[0]);
+                    Navigator.pushNamed(cont, "/results", arguments: {"result":recognitions,"type":"disease","obj":dbObject});
                   }
                 }
                 catch(e){
@@ -331,7 +333,8 @@ class _Home1State extends State<Home1> {
                     return;
                   }
                   print(recognitions[0]);
-                  alertDialog("$recognitions");
+                  // alertDialog("$recognitions");
+                  Navigator.pushNamed(cont, "/results", arguments: {"result":recognitions,"type":"seedling","obj":dbObject});
                 }
                 catch(e){
                   print("Exception $e");
@@ -357,7 +360,8 @@ class _Home1State extends State<Home1> {
                     return;
                   }
                   print(recognitions);
-                  alertDialog("$recognitions");
+                  // alertDialog("$recognitions");
+                  Navigator.pushNamed(cont, "/results", arguments: {"result":recognitions,"type":"seedling","obj":dbObject});
                 }
                 catch(e){
                   print("Exception $e");

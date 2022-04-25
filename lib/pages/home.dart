@@ -225,7 +225,7 @@ class _HomeState extends State<Home> {
                     var result = await dbObject.getDisease(
                         recognitions[0]["index"] + 1);
                     await dbObject.addDiseaseAnalytics(recognitions[0]["index"] );
-                    Navigator.pushNamed(cont, "/crop", arguments: result[0]);
+                    Navigator.pushNamed(cont, "/results", arguments: {"result":recognitions,"type":"disease","obj":dbObject});
                   }
                 }
                 catch(e){
@@ -263,7 +263,7 @@ class _HomeState extends State<Home> {
                     }
                     var result = await dbObject.getDisease(
                         recognitions[0]["index"] + 1);
-                    Navigator.pushNamed(cont, "/crop", arguments: result[0]);
+                    Navigator.pushNamed(cont, "/results", arguments: {"result":recognitions,"type":"disease","obj":dbObject});
                   }
                 }
                 catch(e){
@@ -310,7 +310,8 @@ class _HomeState extends State<Home> {
                     return;
                   }
                   print(recognitions[0]);
-                  alertDialog("$recognitions");
+                  // alertDialog("$recognitions");
+                  Navigator.pushNamed(cont, "/results", arguments: {"result":recognitions,"type":"seedling","obj":dbObject});
                 }
                 catch(e){
                   print("Exception $e");
@@ -333,7 +334,8 @@ class _HomeState extends State<Home> {
                     return;
                   }
                   print(recognitions);
-                  alertDialog("$recognitions");
+                  // alertDialog("$recognitions");
+                  Navigator.pushNamed(cont, "/results", arguments: {"result":recognitions,"type":"seedling","obj":dbObject});
                 }
                 catch(e){
                   print("Exception $e");
