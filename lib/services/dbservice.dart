@@ -117,7 +117,7 @@ class DBService{
               'CREATE TABLE seedling (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, name VARCHAR (255),details TEXT,link VARCHAR);');
           await db.transaction((txn) async {
             int id1 = await txn.rawInsert(
-                'INSERT INTO seedling(id,name,details,link) VALUES(1, "Black Grass", "\nCategory: Weed\n\n\tA. myosuroides is an annual grass which is native to Eurasia and grows in moist meadows, deciduous forests, and cultivated or disturbed ground. A significant weed species in temperate cereal crops, it has become one of the most damaging weeds of winter cereals in Western Europe with the changes in agricultural practice over the past 30 years from regular ploughing to reduced tillage systems, suppression of broadleaf weeds in continuous cereals, and the move away from burning of stubbles. These changes have allowed the weed to invade well-drained lighter soils in addition to the heavier clay soils on which it is dominant. It has been introduced repeatedly as a weed of cultivation into many temperate and warm temperate regions but has not spread to a large degree out of cultivation. A. myosuroides has been listed as a noxious weed in the state of Washington, one of the states where winter wheat is a major crop. Due to its propensity to evolve resistance to herbicides it is a threat to the productivity of continuous cereal growing in high-input systems of temperate areas.","https://www.cabi.org/isc/datasheet/4360#tosummaryOfInvasiveness")');
+                'INSERT INTO seedling(id,name,details,link) VALUES(1, "Black Grass", "\tA. myosuroides is an annual grass which is native to Eurasia and grows in moist meadows, deciduous forests, and cultivated or disturbed ground. A significant weed species in temperate cereal crops, it has become one of the most damaging weeds of winter cereals in Western Europe with the changes in agricultural practice over the past 30 years from regular ploughing to reduced tillage systems, suppression of broadleaf weeds in continuous cereals, and the move away from burning of stubbles. These changes have allowed the weed to invade well-drained lighter soils in addition to the heavier clay soils on which it is dominant. It has been introduced repeatedly as a weed of cultivation into many temperate and warm temperate regions but has not spread to a large degree out of cultivation. A. myosuroides has been listed as a noxious weed in the state of Washington, one of the states where winter wheat is a major crop. Due to its propensity to evolve resistance to herbicides it is a threat to the productivity of continuous cereal growing in high-input systems of temperate areas.","https://www.cabi.org/isc/datasheet/4360#tosummaryOfInvasiveness")');
             print('inserted1: $id1');
             int id2 = await txn.rawInsert(
                 'INSERT INTO seedling(id,name,details,link) VALUES(2, "Charlock", "\tIt is also known as charlock mustard or field mustard, early-flowering plant of the mustard family (Brassicaceae). Charlock is native to the Mediterranean region and has naturalized in temperate regions worldwide; it is an agricultural weed and an invasive species in some areas outside its native range. Charlock reaches 1 metre (3.3 feet) and has stiff bristles on the stems and leaves. The long pod fruits, which form after the clusters of yellow four-petaled flowers bloom, each enclose 10 to 12 black seeds that may remain viable for more than a decade. The plant is closely related to white mustard (Sinapis alba), the seeds of which are used to make the condiment mustard.","https://www.britannica.com/plant/charlock")');
@@ -198,8 +198,20 @@ class DBService{
     return list;
   }
 
+  Future<dynamic> getDiseases()async{
+    List<Map> list = await diseaseDB.rawQuery('SELECT * FROM variety');
+    print(list);
+    return list;
+  }
+
   dynamic getSeedling(int? id)async{
     List<Map> list = await diseaseDB.rawQuery('SELECT * FROM seedling where id=$id');
+    print(list);
+    return list;
+  }
+
+  Future<dynamic> getSeedlings()async{
+    List<Map> list = await diseaseDB.rawQuery('SELECT * FROM seedling');
     print(list);
     return list;
   }

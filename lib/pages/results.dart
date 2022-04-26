@@ -51,6 +51,12 @@ class _ResultState extends State<Result> {
         title: Text("Predictions"),
         elevation: 0,
       ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: (){
+          Navigator.pushReplacementNamed(context, "/listPage",arguments:widget.arguments);
+        },
+        label: Text("No matching result? View All"),
+      ),
       body: loading?Center(
         child: CircularProgressIndicator(),
       ):
