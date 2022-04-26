@@ -37,7 +37,7 @@ class _InitState extends State<Init> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CircularProgressIndicator(color: Colors.green,),
+      body: Center(child: CircularProgressIndicator(color: Colors.green,)),
     );
   }
 }
