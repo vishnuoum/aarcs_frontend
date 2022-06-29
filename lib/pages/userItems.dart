@@ -22,9 +22,13 @@ class _UserItemsState extends State<UserItems> {
   String txt="Loading";
   String district="Select a District";
   late SharedPreferences sharedPreferences;
+  String url = "http://10.0.2.2:3000";
 
   @override
   void initState() {
+    SharedPreferences.getInstance().then((value){
+      url = value.getString("url").toString();
+    });
     initPreference();
     super.initState();
   }
@@ -52,7 +56,7 @@ class _UserItemsState extends State<UserItems> {
     }
     else{
       setState(() {
-        txt="Something went wrong";
+        txt="Loading...";
       });
       Future.delayed(Duration(seconds: 5),(){init(query: query);});
     }
@@ -390,7 +394,7 @@ class _UserItemsState extends State<UserItems> {
                         Expanded(
                             child: GestureDetector(
                               onTap: (){
-                                showPic(context, result[index]["pic"]);
+                                showPic(context, result[index]["pic"].replaceAll("http://10.0.2.2:3000",url));
                               },
                               child: Container(
                                 width: double.infinity,
@@ -398,7 +402,7 @@ class _UserItemsState extends State<UserItems> {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10),
                                   image: DecorationImage(
-                                      image: NetworkImage(result[index]["pic"]),
+                                      image: NetworkImage(result[index]["pic"].replaceAll("http://10.0.2.2:3000",url)),
                                       fit: BoxFit.cover),
                                 ),
                                 child: Padding(

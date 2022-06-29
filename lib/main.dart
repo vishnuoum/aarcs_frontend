@@ -27,6 +27,7 @@ import 'package:agri_app/pages/recommend.dart';
 import 'package:agri_app/pages/recommended.dart';
 import 'package:agri_app/pages/rent.dart';
 import 'package:agri_app/pages/results.dart';
+import 'package:agri_app/pages/setURLPage.dart';
 import 'package:agri_app/pages/showCommunity.dart';
 import 'package:agri_app/pages/signup.dart';
 import 'package:agri_app/pages/userItems.dart';
@@ -116,6 +117,7 @@ class _MyAppState extends State<MyApp> {
         "/logs":(context) => LOGS(),
         "/results":(context) => Result(arguments: ModalRoute.of(context)!.settings.arguments as Map,),
         "/listPage":(context) => ListPage(arguments: ModalRoute.of(context)!.settings.arguments as Map,),
+        "/setURLPage":(context) => SetURLPage(),
       },
       initialRoute: "/init",
     );

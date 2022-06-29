@@ -1,11 +1,20 @@
 
 import 'package:http/http.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AddService{
 
+  late SharedPreferences sharedPreferences;
+
+  AddService(){
+    SharedPreferences.getInstance().then((value) {
+      sharedPreferences = value;
+    });
+  }
+
   Future<dynamic> addItem({required String name,required String price,required String place,required String district,required String? phone,required String path})async{
     try{
-      var request = new MultipartRequest("POST", Uri.parse("http://192.168.18.2:3000/addItem"));
+      var request = new MultipartRequest("POST", Uri.parse("${sharedPreferences.getString("url")}/addItem"));
       request.fields['name'] = name;
       request.fields['price']=price;
       request.fields["place"]=place;
@@ -33,7 +42,7 @@ class AddService{
 
   Future<dynamic> addTool({required String name,required String price,required String place,required String district,required String? phone,required String path})async{
     try{
-      var request = new MultipartRequest("POST", Uri.parse("http://192.168.18.2:3000/addTool"));
+      var request = new MultipartRequest("POST", Uri.parse("${sharedPreferences.getString("url")}/addTool"));
       request.fields['name'] = name;
       request.fields['price']=price;
       request.fields["place"]=place;
@@ -61,7 +70,7 @@ class AddService{
 
   Future<dynamic> addLand({required String name,required String price,required String place,required String district,required String? phone,required String path})async{
     try{
-      var request = new MultipartRequest("POST", Uri.parse("http://192.168.18.2:3000/addLand"));
+      var request = new MultipartRequest("POST", Uri.parse("${sharedPreferences.getString("url")}/addLand"));
       request.fields['name'] = name;
       request.fields['price']=price;
       request.fields["place"]=place;

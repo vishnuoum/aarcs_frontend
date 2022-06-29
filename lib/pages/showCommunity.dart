@@ -18,9 +18,13 @@ class _ShowCommunityState extends State<ShowCommunity> {
   AskService askService = AskService();
   DateFormat dateFormat = DateFormat("dd/MM/yyyy hh:mm a");
   late SharedPreferences sharedPreference;
+  String url = "http://10.0.2.2:3000";
 
   @override
   void initState() {
+    SharedPreferences.getInstance().then((value) {
+      url = value.getString("url").toString();
+    });
     loadSP();
     super.initState();
   }
@@ -35,7 +39,7 @@ class _ShowCommunityState extends State<ShowCommunity> {
     result = await askService.showCommunity(phone: sharedPreference.getString("phone"));
     if(result=="error"){
       setState(() {
-        txt="Something went wrong";
+        txt="Loading...";
       });
       Future.delayed(Duration(seconds: 5),(){
         load();
@@ -84,7 +88,7 @@ class _ShowCommunityState extends State<ShowCommunity> {
               onTap: ()async{
                 await Navigator.pushNamed(context, "/doubt",arguments: {"resolved":result[index]["resolved"],"phone":sharedPreference.getString("phone"),"id":result[index]["id"],"username":result[index]["username"],"district":result[index]["district"],
                   "query":result[index]["query"],"datetime":result[index]["datetime"],"answers":result[index]["answers"],
-                  "description":result[index]["description"],"pic":result[index]["pic"]});
+                  "description":result[index]["description"],"pic":result[index]["pic"].replaceAll("http://10.0.2.2:3000",url)});
                 loading=true;
                 load();
                 },
@@ -109,7 +113,7 @@ class _ShowCommunityState extends State<ShowCommunity> {
                       Container(height: 200,decoration: BoxDecoration(
                           image: DecorationImage(
                               fit: BoxFit.cover,
-                              image: NetworkImage(result[index]["pic"])
+                              image: NetworkImage(result[index]["pic"].replaceAll("http://10.0.2.2:3000",url))
                           )
                       ),
                         child: Padding(

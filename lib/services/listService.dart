@@ -2,11 +2,21 @@
 import 'dart:convert';
 
 import 'package:http/http.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ListService{
+
+  late SharedPreferences sharedPreferences;
+
+  ListService(){
+    SharedPreferences.getInstance().then((value) {
+      sharedPreferences = value;
+    });
+  }
+
   Future<dynamic> getItems({String query=""})async{
     try {
-      Response response = await get(Uri.parse("http://192.168.18.2:3000/getItems?query=$query"),);
+      Response response = await get(Uri.parse("${sharedPreferences.getString("url")}/getItems?query=$query"),);
       print(response.body);
       return jsonDecode(response.body);
     }catch(e){
@@ -16,7 +26,7 @@ class ListService{
 
   Future<dynamic> getTools({String query=""})async{
     try {
-      Response response = await get(Uri.parse("http://192.168.18.2:3000/getTools?query=$query"));
+      Response response = await get(Uri.parse("${sharedPreferences.getString("url")}/getTools?query=$query"));
       print(response.body);
       return jsonDecode(response.body);
     }catch(e){
@@ -26,7 +36,7 @@ class ListService{
 
   Future<dynamic> getLands({String query=""})async{
     try {
-      Response response = await get(Uri.parse("http://192.168.18.2:3000/getLands?query=$query"));
+      Response response = await get(Uri.parse("${sharedPreferences.getString("url")}/getLands?query=$query"));
       print(response.body);
       return jsonDecode(response.body);
     }catch(e){
@@ -36,7 +46,7 @@ class ListService{
   
   Future<dynamic> getUserItems({required String? phone,String query=""})async{
     try{
-      Response response=await post(Uri.parse("http://192.168.18.2:3000/getUserItems"),body: {"phone":phone,"query":query});
+      Response response=await post(Uri.parse("${sharedPreferences.getString("url")}/getUserItems"),body: {"phone":phone,"query":query});
       print(response.body);
       return jsonDecode(response.body);
     }
@@ -47,7 +57,7 @@ class ListService{
 
   Future<dynamic> editUserItems({required String id,required String name,required String price,required String place,required String district})async{
     try{
-      Response response=await post(Uri.parse("http://192.168.18.2:3000/editUserItem"),body: {"id":id,"name":name,"price":price,"place":place,"district":district});
+      Response response=await post(Uri.parse("${sharedPreferences.getString("url")}/editUserItem"),body: {"id":id,"name":name,"price":price,"place":place,"district":district});
       print(response.body);
       if(response.body=="done"){
         return "done";
@@ -63,7 +73,7 @@ class ListService{
 
   Future<dynamic> getUserTools({required String? phone,String query=""})async{
     try{
-      Response response=await post(Uri.parse("http://192.168.18.2:3000/getUserTools"),body: {"phone":phone,"query":query});
+      Response response=await post(Uri.parse("${sharedPreferences.getString("url")}/getUserTools"),body: {"phone":phone,"query":query});
       print(response.body);
       return jsonDecode(response.body);
     }
@@ -74,7 +84,7 @@ class ListService{
 
   Future<dynamic> editUserTool({required String id,required String name,required String price,required String place,required String district})async{
     try{
-      Response response=await post(Uri.parse("http://192.168.18.2:3000/editUserTool"),body: {"id":id,"name":name,"price":price,"place":place,"district":district});
+      Response response=await post(Uri.parse("${sharedPreferences.getString("url")}/editUserTool"),body: {"id":id,"name":name,"price":price,"place":place,"district":district});
       print(response.body);
       if(response.body=="done"){
         return "done";
@@ -91,7 +101,7 @@ class ListService{
 
   Future<dynamic> getUserLands({required String? phone,String query=""})async{
     try{
-      Response response=await post(Uri.parse("http://192.168.18.2:3000/getUserLands"),body: {"phone":phone,"query":query});
+      Response response=await post(Uri.parse("${sharedPreferences.getString("url")}/getUserLands"),body: {"phone":phone,"query":query});
       print(response.body);
       return jsonDecode(response.body);
     }
@@ -102,7 +112,7 @@ class ListService{
 
   Future<dynamic> editUserLand({required String id,required String name,required String price,required String place,required String district})async{
     try{
-      Response response=await post(Uri.parse("http://192.168.18.2:3000/editUserLand"),body: {"id":id,"name":name,"price":price,"place":place,"district":district});
+      Response response=await post(Uri.parse("${sharedPreferences.getString("url")}/editUserLand"),body: {"id":id,"name":name,"price":price,"place":place,"district":district});
       print(response.body);
       if(response.body=="done"){
         return "done";

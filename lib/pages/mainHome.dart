@@ -423,6 +423,14 @@ class _Home1State extends State<Home1> {
               },
             ),
             ListTile(
+              leading: Icon(Icons.description),
+              title: Text("Set URL"),
+              onTap: ()async{
+                Navigator.pop(context);
+                Navigator.pushNamed(context, "/setURLPage");
+              },
+            ),
+            ListTile(
               leading: Icon(Icons.person),
               title: Text("Contact Us"),
               onTap: ()async{

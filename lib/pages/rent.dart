@@ -1,5 +1,6 @@
 import 'package:agri_app/services/listService.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Rent extends StatefulWidget {
@@ -17,10 +18,14 @@ class _RentState extends State<Rent> {
   bool loading=true;
   String txt="Loading";
   dynamic result=[];
+  String url = "http://10.0.2.2:3000";
 
 
   @override
   void initState() {
+    SharedPreferences.getInstance().then((value) {
+      url = value.getString("url").toString();
+    });
     init();
     super.initState();
   }
@@ -35,7 +40,7 @@ class _RentState extends State<Rent> {
     }
     else{
       setState(() {
-        txt="Something went wrong";
+        txt="Loading...";
       });
       Future.delayed(Duration(seconds: 5),(){init(query: query);});
     }
@@ -166,7 +171,7 @@ class _RentState extends State<Rent> {
             itemBuilder: (context,index) {
               return GestureDetector(
                 onTap: (){
-                  showPic(context, result[index]["pic"]);
+                  showPic(context, result[index]["pic"].replaceAll("http://10.0.2.2:3000",url));
                 },
                 child: Container(
                   margin: EdgeInsets.only(bottom: 10),
@@ -174,7 +179,7 @@ class _RentState extends State<Rent> {
                     borderRadius: BorderRadius.circular(10),
                     image: DecorationImage(
                       image: NetworkImage(
-                          result[index]["pic"]),
+                          result[index]["pic"].replaceAll("http://10.0.2.2:3000",url)),
                       fit: BoxFit.cover,
                     ),
                   ),

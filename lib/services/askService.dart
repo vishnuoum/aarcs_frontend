@@ -1,12 +1,21 @@
 import 'dart:convert';
 
 import 'package:http/http.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AskService{
+
+  late SharedPreferences sharedPreferences;
+
+  AskService(){
+    SharedPreferences.getInstance().then((value) {
+      sharedPreferences = value;
+    });
+  }
   
   Future<dynamic> ask({required String query,required String description, required String path,required String? phone})async{
     try{
-      var request = new MultipartRequest("POST", Uri.parse("http://192.168.18.2:3000/askCommunity"));
+      var request = new MultipartRequest("POST", Uri.parse("${sharedPreferences.getString("url")}/askCommunity"));
       request.fields['query'] = query;
       request.fields['description']=description;
       request.fields["phone"]=phone!;
@@ -33,7 +42,7 @@ class AskService{
     try {
       print("showCommunity");
       Response response = await post(
-          Uri.parse("http://192.168.18.2:3000/showCommunity"),body: {"phone":phone});
+          Uri.parse("${sharedPreferences.getString("url")}/showCommunity"),body: {"phone":phone});
       if (response.body != "error") {
         print(jsonDecode(response.body));
         return jsonDecode(response.body);
@@ -52,7 +61,7 @@ class AskService{
     try {
       print("answersCommunity");
       Response response = await post(
-          Uri.parse("http://192.168.18.2:3000/answers"),body: {"phone":phone,"id":id});
+          Uri.parse("${sharedPreferences.getString("url")}/answers"),body: {"phone":phone,"id":id});
       if (response.body != "error") {
         print(jsonDecode(response.body));
         return jsonDecode(response.body);
@@ -71,7 +80,7 @@ class AskService{
     try {
       print("answersCommunity");
       Response response = await post(
-          Uri.parse("http://192.168.18.2:3000/postAnswer"),body: {"phone":phone,"id":id,"answer":answer});
+          Uri.parse("${sharedPreferences.getString("url")}/postAnswer"),body: {"phone":phone,"id":id,"answer":answer});
       if (response.body == "done") {
         print("done");
         return "done";
@@ -90,7 +99,7 @@ class AskService{
     try {
       print("myQueries");
       Response response = await post(
-          Uri.parse("http://192.168.18.2:3000/myQuery"),body: {"phone":phone});
+          Uri.parse("${sharedPreferences.getString("url")}/myQuery"),body: {"phone":phone});
       if (response.body != "error") {
         print(response.body);
         print(jsonDecode(response.body));
@@ -110,7 +119,7 @@ class AskService{
     try {
       print("answersCommunity");
       Response response = await post(
-          Uri.parse("http://192.168.18.2:3000/markAnswer"),body: {"id":id,"doubtId":doubtId});
+          Uri.parse("${sharedPreferences.getString("url")}/markAnswer"),body: {"id":id,"doubtId":doubtId});
       if (response.body == "done") {
         print("done");
         return "done";

@@ -1,5 +1,6 @@
 import 'package:agri_app/services/listService.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MarketPlace extends StatefulWidget {
@@ -17,10 +18,14 @@ class _MarketPlaceState extends State<MarketPlace> {
   bool loading=true;
   dynamic result=[];
   String txt="Loading";
+  String url = "http://10.0.2.2:3000";
 
   @override
   void initState() {
     init();
+    SharedPreferences.getInstance().then((value) {
+      url = value.getString("url").toString();
+    });
     super.initState();
   }
 
@@ -41,7 +46,7 @@ class _MarketPlaceState extends State<MarketPlace> {
     }
     else{
       setState(() {
-        txt="Something went wrong";
+        txt="Loading...";
       });
       Future.delayed(Duration(seconds: 5),(){init(query: query);});
     }
@@ -191,7 +196,7 @@ class _MarketPlaceState extends State<MarketPlace> {
                             Expanded(
                                 child: GestureDetector(
                                   onTap: (){
-                                    showPic(context, result[index]["pic"]);
+                                    showPic(context, result[index]["pic"].replaceAll("http://10.0.2.2:3000",url));
                                   },
                                   child: Container(
                                     width: double.infinity,
@@ -199,7 +204,7 @@ class _MarketPlaceState extends State<MarketPlace> {
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(10),
                                       image: DecorationImage(
-                                          image: NetworkImage(result[index]["pic"]),
+                                          image: NetworkImage(result[index]["pic"].replaceAll("http://10.0.2.2:3000",url)),
                                           fit: BoxFit.cover),
                                     ),
                                     child: Padding(

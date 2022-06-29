@@ -1,14 +1,23 @@
 
 import 'package:http/http.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginService{
+
+  late SharedPreferences sharedPreferences;
+
+  LoginService(){
+    SharedPreferences.getInstance().then((value) {
+      sharedPreferences = value;
+    });
+  }
 
 
   Future<dynamic> login({required String phone,required String password})async{
     print(phone);
     print(password);
     try {
-      Response response = await post(Uri.parse("http://192.168.18.2:3000/login"),
+      Response response = await post(Uri.parse("${sharedPreferences.getString("url")}/login"),
           body: {"phone": phone, "password": password});
       if (response.body == "done") {
         return "done";
@@ -29,7 +38,7 @@ class LoginService{
     print(phone);
     print(password);
     try {
-      Response response = await post(Uri.parse("http://192.168.18.2:3000/signup"),
+      Response response = await post(Uri.parse("${sharedPreferences.getString("url")}/signup"),
           body: {"name":name,"phone": phone, "district":district,"password": password,"otp":otp,"place":place});
       if (response.body == "done") {
         return "done";
@@ -51,7 +60,7 @@ class LoginService{
   Future<dynamic> update({required String name,required String phone,required String district,required String id,required String place})async{
 
     try {
-      Response response = await post(Uri.parse("http://192.168.18.2:3000/editProfile"),
+      Response response = await post(Uri.parse("${sharedPreferences.getString("url")}/editProfile"),
           body: {"name":name,"phone": phone, "district":district,"id":id,"place":place});
       if (response.body == "done") {
         return "done";
@@ -73,7 +82,7 @@ class LoginService{
   
   Future<dynamic> updatePassword({required String password,required String otp,required String? phone})async{
     try{
-      Response response = await post(Uri.parse("http://192.168.18.2:3000/editPassword"),
+      Response response = await post(Uri.parse("${sharedPreferences.getString("url")}/editPassword"),
           body: {"password":password,"phone": phone, "otp":otp});
       if(response.body=="done"){
         return "done";
@@ -94,7 +103,7 @@ class LoginService{
   
   void otp({required String? phone})async{
     try{
-      await post(Uri.parse("http://192.168.18.2:3000/getOTP"),body: {"phone":phone});
+      await post(Uri.parse("${sharedPreferences.getString("url")}/getOTP"),body: {"phone":phone});
     }
     catch(e){
       print("OTP exception:$e");
@@ -104,7 +113,7 @@ class LoginService{
   Future<dynamic> authenticate({required String phone})async{
 
     try {
-      Response response = await post(Uri.parse("http://192.168.18.2:3000/authenticate"),
+      Response response = await post(Uri.parse("${sharedPreferences.getString("url")}/authenticate"),
           body: {"phone": phone});
       if (response.body == "done") {
         return "done";

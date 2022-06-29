@@ -91,6 +91,11 @@ class _LoginState extends State<Login> {
       child: Scaffold(
         appBar: AppBar(
           elevation: 0,
+          actions: [
+            IconButton(onPressed: (){
+              Navigator.pushNamed(context, "/setURLPage");
+            }, icon: Icon(Icons.list_alt))
+          ],
           systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: Colors.green),
           backgroundColor: Colors.white,
           iconTheme: IconThemeData(

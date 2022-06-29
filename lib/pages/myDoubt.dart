@@ -32,7 +32,7 @@ class _MyDoubtState extends State<MyDoubt> {
     result = await askService.answers(phone: widget.arguments["phone"], id: widget.arguments["id"].toString());
     if(result=="error"){
       setState(() {
-        txt="Something went wrong";
+        txt="Loading...";
       });
       Future.delayed(Duration(seconds: 5),(){
         load();

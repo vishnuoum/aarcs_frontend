@@ -34,19 +34,19 @@ class _ChatState extends State<Chat> {
   @override
   void initState() {
     initSharedPreferences();
-    init();
     super.initState();
   }
 
   void initSharedPreferences()async{
     sharedPreferences = await SharedPreferences.getInstance();
     phone=sharedPreferences.getString("phone");
+    init();
     initChat();
   }
 
   void init()async{
     try {
-      socket = io('http://192.168.18.2:3000', <String, dynamic>{
+      socket = io('${sharedPreferences.getString("url")}', <String, dynamic>{
         'transports': ['websocket'],
         'autoConnect': false,
       });
