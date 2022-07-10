@@ -1,0 +1,178 @@
+import 'dart:async';
+
+import 'package:agri_app/services/loginService.dart';
+import 'package:flutter/material.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
+import 'package:otp_text_field/otp_field.dart';
+import 'package:otp_text_field/otp_field_style.dart';
+import 'package:otp_text_field/style.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+class OTPMal extends StatefulWidget {
+  final Map arguments;
+  OTPMal({Key? key,required this.arguments}) : super(key: key);
+
+  @override
+  _OTPMalState createState() => _OTPMalState();
+}
+
+class _OTPMalState extends State<OTPMal> {
+
+  LoginService loginService=LoginService();
+  String otp="";
+  int count=60;
+  late Timer time;
+  late SharedPreferences sharedPreferences;
+
+  @override
+  void initState() {
+    timer();
+    loginService.otp(phone:widget.arguments["phone"]);
+    print(widget.arguments);
+    loadSharedPreferences();
+    super.initState();
+  }
+
+  void loadSharedPreferences()async{
+    sharedPreferences=await SharedPreferences.getInstance();
+  }
+
+  void timer({countTimer=60})async{
+
+    if(countTimer>=0) {
+      time=Timer(Duration(seconds: 1), () {
+        setState(() {
+          count = countTimer;
+        });
+        timer(countTimer: countTimer - 1);
+      });
+    }
+  }
+
+  Future<void> alertDialog(var text) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('അലെർട്'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text(text),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('ഓക്കേ'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  showLoading(BuildContext context){
+    AlertDialog alert =AlertDialog(
+      content: SizedBox(
+        height: 80,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(height: 50,width: 50,child: CircularProgressIndicator(strokeWidth: 5,valueColor: AlwaysStoppedAnimation(Colors.green),),),
+            SizedBox(height: 10,),
+            Text("Loading")
+          ],
+        ),
+      ),
+    );
+
+    showDialog(context: context,builder:(BuildContext context){
+      return WillPopScope(onWillPop: ()async => false,child: alert);
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    time.cancel();
+  }
+
+
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        iconTheme: IconThemeData(
+          color: Colors.green
+        ),
+      ),
+      body: Padding(
+        padding: EdgeInsets.symmetric(vertical: 10,horizontal: 30),
+        child: Container(
+          width: MediaQuery.of(context).size.width-60,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 15,),
+              Text("ഫോൺ നമ്പർ പരിശോധിക്കുക.",style: TextStyle(color: Colors.green,fontSize: 25,fontWeight: FontWeight.bold),),
+              SizedBox(height: 70,),
+              Center(
+                child: OTPTextField(
+                  fieldStyle: FieldStyle.underline,
+                  otpFieldStyle: OtpFieldStyle(focusBorderColor: Colors.green),
+                  length: 6,
+                  width: 300,
+                  onChanged: (pin){},
+                  onCompleted: (pin){
+                    otp=pin;
+                  },
+                ),
+              ),
+              SizedBox(height: 30,),
+              Row(
+                children: [
+                  Expanded(flex: 2,child: TextButton(onPressed: count!=0? null:()async{
+                    loginService.otp(phone:widget.arguments["phone"]);
+                    timer();
+                  }, child: Text("അയയ്ക്കുക ${count==0?"":count}"),style: TextButton.styleFrom(backgroundColor: Colors.green,primary: Colors.white,padding: EdgeInsets.all(18),shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50))),)),
+                  SizedBox(width: 10,),
+                  Expanded(flex: 2,child: TextButton(onPressed: otp.length==6?()async{
+                    showLoading(context);
+                    var result=await loginService.signup(name: widget.arguments["name"], phone: widget.arguments["phone"], place: widget.arguments["place"], district: widget.arguments["district"], password: widget.arguments["password"], otp: otp);
+                    if(result=="done"){
+                      await sharedPreferences.setString("phone", widget.arguments["phone"]);
+                      OneSignal.shared.setExternalUserId(widget.arguments["phone"]).then((results) {
+                        print(results.toString());
+                      }).catchError((error) {
+                        print(error.toString());
+                      });
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                      Navigator.pushReplacementNamed(context,"/initMal");
+                    }
+                    else if(result=="otp error"){
+                      Navigator.pop(context);
+                      alertDialog("Error in OTP");
+                    }
+                    else if(result=="netError"){
+                      Navigator.pop(context);
+                      alertDialog("Something went wrong. Please check your network connection and try again!!");
+                    }
+                  }:null, child: Text("Verify"),style: TextButton.styleFrom(backgroundColor: Colors.green,primary: Colors.white,padding: EdgeInsets.all(18),shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50))),)),                ],
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

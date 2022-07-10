@@ -1,4 +1,5 @@
 List<String> labels=['apple', 'banana', 'blackgram', 'chickpea', 'coconut', 'coffee', 'cotton', 'grapes', 'jute', 'kidneybeans', 'lentil', 'maize', 'mango', 'mothbeans', 'mungbean', 'muskmelon', 'orange', 'papaya', 'pigeonpeas', 'pomegranate', 'rice', 'watermelon'];
+List<String> labelsMal=['ആപ്പിൾ', 'വാഴപ്പഴം', 'കറുമ്പ്', 'ചെറുപയർ', 'തേങ്ങ', 'കാപ്പി', 'പരുത്തി', 'മുന്തിരി', 'ചണം', 'കിഡ്നിബീൻസ്', 'പയർ', 'ചോളം', 'മാങ്ങ' , 'മോത്ത്ബീൻസ്', 'മുങ്ബീൻ', 'കസ്തൂരി', 'ഓറഞ്ച്', 'പപ്പായ', 'പ്രാവ്', 'മാതളനാരകം', 'അരി', 'തണ്ണിമത്തൻ'];
 
 class DecisionTreeClassifier {
 
@@ -10,7 +11,7 @@ class DecisionTreeClassifier {
     return index;
   }
 
-  Future<String> predict({required List features}) async{
+  Future<String> predict({required List features,String lang = "eng"}) async{
   List<int> classes = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 
   for(var i=0;i<features.length;i++){
@@ -1067,6 +1068,6 @@ class DecisionTreeClassifier {
   }
   }
 
-  return labels[findMax(classes)];
+  return lang=="eng"?labels[findMax(classes)]:labelsMal[findMax(classes)];
   }
 }

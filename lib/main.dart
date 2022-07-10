@@ -34,6 +34,42 @@ import 'package:agri_app/pages/userItems.dart';
 import 'package:agri_app/pages/userLands.dart';
 import 'package:agri_app/pages/userTools.dart';
 import 'package:agri_app/pages/viewPic.dart';
+import 'package:agri_app/pages/mal/Crop.dart';
+import 'package:agri_app/pages/mal/addNewCrop.dart';
+import 'package:agri_app/pages/mal/addNewDoubt.dart';
+import 'package:agri_app/pages/mal/addNewEvent.dart';
+import 'package:agri_app/pages/mal/addNewLand.dart';
+import 'package:agri_app/pages/mal/addNewTool.dart';
+import 'package:agri_app/pages/mal/calendar.dart';
+import 'package:agri_app/pages/mal/changePassword.dart';
+import 'package:agri_app/pages/mal/chat.dart';
+import 'package:agri_app/pages/mal/chooseHome.dart';
+import 'package:agri_app/pages/mal/doubt.dart';
+import 'package:agri_app/pages/mal/editEvent.dart';
+import 'package:agri_app/pages/mal/home.dart';
+import 'package:agri_app/pages/mal/initial.dart';
+import 'package:agri_app/pages/mal/listPage.dart';
+import 'package:agri_app/pages/mal/logs.dart';
+import 'package:agri_app/pages/mal/mainHome.dart';
+import 'package:agri_app/pages/mal/myDoubt.dart';
+import 'package:agri_app/pages/mal/myQueries.dart';
+import 'package:agri_app/pages/mal/newHome.dart';
+import 'package:agri_app/pages/mal/land.dart';
+import 'package:agri_app/pages/mal/login.dart';
+import 'package:agri_app/pages/mal/market.dart';
+import 'package:agri_app/pages/mal/otp.dart';
+import 'package:agri_app/pages/mal/profile.dart';
+import 'package:agri_app/pages/mal/recommend.dart';
+import 'package:agri_app/pages/mal/recommended.dart';
+import 'package:agri_app/pages/mal/rent.dart';
+import 'package:agri_app/pages/mal/results.dart';
+import 'package:agri_app/pages/mal/setURLPage.dart';
+import 'package:agri_app/pages/mal/showCommunity.dart';
+import 'package:agri_app/pages/mal/signup.dart';
+import 'package:agri_app/pages/mal/userItems.dart';
+import 'package:agri_app/pages/mal/userLands.dart';
+import 'package:agri_app/pages/mal/userTools.dart';
+import 'package:agri_app/pages/mal/viewPic.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
@@ -118,8 +154,45 @@ class _MyAppState extends State<MyApp> {
         "/results":(context) => Result(arguments: ModalRoute.of(context)!.settings.arguments as Map,),
         "/listPage":(context) => ListPage(arguments: ModalRoute.of(context)!.settings.arguments as Map,),
         "/setURLPage":(context) => SetURLPage(),
+
+        "/initMal" : (context) => InitMal(),
+        "/homeMal" : (context) => HomeMal(),
+        "/home1Mal" : (context) => Home1Mal(),
+        "/home2Mal" : (context) => Home2Mal(),
+        "/chooseHomeMal" : (context) => ChooseHomeMal(),
+        "/loginMal" : (context) => LoginMal(),
+        "/signupMal" : (context) => SignupMal(),
+        "/cropMal" : (context) => CropMal( arguments:ModalRoute.of(context)!.settings.arguments as Map,),
+        "/chatMal": (context) => ChatMal(),
+        "/marketMal":(context) => MarketPlaceMal(),
+        "/rentMal" : (context) => RentMal(),
+        "/landMal" : (context) => LandMal(),
+        "/addNewCropMal":(context) => AddNewCropMal(),
+        "/addNewToolMal":(context) => AddNewToolMal(),
+        "/addNewLandMal":(context) => AddNewLandMal(),
+        "/otpMal":(context) => OTPMal(arguments: ModalRoute.of(context)!.settings.arguments as Map,),
+        "/profileMal":(context) => ProfileMal(),
+        "/changePasswordMal":(context) => ChangePasswordMal(arguments: ModalRoute.of(context)!.settings.arguments as Map,),
+        "/userItemsMal":(context) => UserItemsMal(),
+        "/userToolsMal":(context) => UserToolsMal(),
+        "/userLandsMal":(context) => UserLandsMal(),
+        "/recommendMal":(context) => RecommendMal(),
+        "/calendarMal":(context) => CalendarMal(),
+        "/addNewEventMal":(context) => AddNewEventMal(),
+        "/editEventMal":(context) => EditEventMal(),
+        "/showCommunityMal":(context) => ShowCommunityMal(),
+        "/recommendationResultMal":(context) => RecommendationResultMal(argument: ModalRoute.of(context)!.settings.arguments as Map,),
+        "/doubtMal":(context) => DoubtMal(arguments: ModalRoute.of(context)!.settings.arguments as Map,),
+        "/addNewDoubtMal":(context) => AddNewDoubtMal(),
+        "/myQueriesMal":(context) => MyQueriesMal(),
+        "/myDoubtMal":(context) => MyDoubtMal(arguments: ModalRoute.of(context)!.settings.arguments as Map,),
+        "/viewPicMal":(context) => ViewPicMal(arguments: ModalRoute.of(context)!.settings.arguments as Map,),
+        "/logsMal":(context) => LOGSMal(),
+        "/resultsMal":(context) => ResultMal(arguments: ModalRoute.of(context)!.settings.arguments as Map,),
+        "/listPageMal":(context) => ListPageMal(arguments: ModalRoute.of(context)!.settings.arguments as Map,),
+        "/setURLPageMal":(context) => SetURLPageMal(),
       },
-      initialRoute: "/init",
+      initialRoute: "/initMal",
     );
   }
 }
