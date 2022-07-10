@@ -192,7 +192,7 @@ class _MyAppState extends State<MyApp> {
         "/listPageMal":(context) => ListPageMal(arguments: ModalRoute.of(context)!.settings.arguments as Map,),
         "/setURLPageMal":(context) => SetURLPageMal(),
       },
-      initialRoute: "/initMal",
+      initialRoute: "/init",
     );
   }
 }

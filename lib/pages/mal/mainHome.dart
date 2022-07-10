@@ -415,6 +415,15 @@ class _Home1MalState extends State<Home1Mal> {
               },
             ),
             ListTile(
+              leading: Icon(Icons.language),
+              title: Text("ഇംഗ്ലീഷിലേക്ക് മാറുക"),
+              onTap: ()async{
+                await sharedPreferences.remove("lang");
+                Navigator.pop(context);
+                Navigator.pushReplacementNamed(context, "/init");
+              },
+            ),
+            ListTile(
               leading: Icon(Icons.description),
               title: Text("Logs"),
               onTap: ()async{
@@ -423,7 +432,7 @@ class _Home1MalState extends State<Home1Mal> {
               },
             ),
             ListTile(
-              leading: Icon(Icons.description),
+              leading: Icon(Icons.link),
               title: Text("Set URL"),
               onTap: ()async{
                 Navigator.pop(context);
@@ -561,7 +570,7 @@ class _Home1MalState extends State<Home1Mal> {
                                   children: [
                                     Icon(FlutterIcon.leaf,color: Colors.green,size: 30,),
                                     SizedBox(height: 10,),
-                                    Text("രോഗങ്ങൾ",style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 17),)
+                                    Text("രോഗങ്ങൾ",style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 12),)
                                   ],
                                 ),
                               ),
@@ -587,7 +596,7 @@ class _Home1MalState extends State<Home1Mal> {
                                   children: [
                                     Icon(FlutterIcon.plant,color: Colors.white,size: 30,),
                                     SizedBox(height: 10,),
-                                    Text("തൈകൾ",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 17),)
+                                    Text("തൈകൾ",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 12),)
                                   ],
                                 ),
                               ),
@@ -612,7 +621,7 @@ class _Home1MalState extends State<Home1Mal> {
                                   children: [
                                     Icon(FlutterIcon.soil,color: Colors.green,size: 30,),
                                     SizedBox(height: 10,),
-                                    Text("വിളകൾ",style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 17),)
+                                    Text("വിളകൾ",style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 12),)
                                   ],
                                 ),
                               ),
@@ -645,7 +654,7 @@ class _Home1MalState extends State<Home1Mal> {
                                   children: [
                                     Icon(Icons.calendar_today,color: Colors.green,size: 30,),
                                     SizedBox(height: 10,),
-                                    Text("ഷെഡ്യൂളർ",style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 17),)
+                                    Text("ഷെഡ്യൂളർ",style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 12),)
                                   ],
                                 ),
                               ),
@@ -655,6 +664,7 @@ class _Home1MalState extends State<Home1Mal> {
                       ),
                     ),
                     authenticated?Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(height: 20,),
                         Padding(
@@ -686,7 +696,7 @@ class _Home1MalState extends State<Home1Mal> {
                                       children: [
                                         Icon(Icons.shopping_basket,color: Colors.white,size: 30,),
                                         SizedBox(height: 10,),
-                                        Text("വിപണി",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 17),)
+                                        Text("വിപണി",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 12),)
                                       ],
                                     ),
                                   ),
@@ -711,7 +721,7 @@ class _Home1MalState extends State<Home1Mal> {
                                       children: [
                                         Icon(Icons.location_on,color: Colors.green,size: 30,),
                                         SizedBox(height: 10,),
-                                        Text("ഭൂമികൾ",style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 17),)
+                                        Text("ഭൂമികൾ",style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 12),)
                                       ],
                                     ),
                                   ),
@@ -737,7 +747,7 @@ class _Home1MalState extends State<Home1Mal> {
                                       children: [
                                         Icon(Icons.settings,color: Colors.white,size: 30,),
                                         SizedBox(height: 10,),
-                                        Text("ഉപകരണങ്ങൾ",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 17),)
+                                        Text("ഉപകരണങ്ങൾ",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 9),)
                                       ],
                                     ),
                                   ),
@@ -770,7 +780,7 @@ class _Home1MalState extends State<Home1Mal> {
                                       children: [
                                         Icon(Icons.chat_bubble,color: Colors.green,size: 30,),
                                         SizedBox(height: 10,),
-                                        Text("ചാറ്റ്",style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 17),)
+                                        Text("ചാറ്റ്",style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 12),)
                                       ],
                                     ),
                                   ),
@@ -796,7 +806,7 @@ class _Home1MalState extends State<Home1Mal> {
                                       children: [
                                         Icon(Icons.question_answer,color: Colors.green,size: 30,),
                                         SizedBox(height: 10,),
-                                        Text("പോസ്റ്റുകൾ",style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 17),)
+                                        Text("പോസ്റ്റുകൾ",style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 12),)
                                       ],
                                     ),
                                   ),

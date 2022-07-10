@@ -23,7 +23,10 @@ class _InitState extends State<Init> {
     if(!sharedPreferences.containsKey("url")){
       sharedPreferences.setString("url", "http://10.0.2.2:3000");
     }
-    if(sharedPreferences.containsKey("home")){
+    if(sharedPreferences.containsKey("lang")){
+      Navigator.pushReplacementNamed(context, "/initMal");
+    }
+    else if(sharedPreferences.containsKey("home")){
       var value=sharedPreferences.getString("home");
       if(value=="home")
         Navigator.pushReplacementNamed(context, "/home");

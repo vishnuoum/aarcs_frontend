@@ -415,6 +415,15 @@ class _Home1State extends State<Home1> {
               },
             ),
             ListTile(
+              leading: Icon(Icons.language),
+              title: Text("Switch to Malayalam"),
+              onTap: (){
+                sharedPreferences.setString("lang","mal");
+                Navigator.pop(context);
+                Navigator.pushReplacementNamed(context, "/initMal");
+              },
+            ),
+            ListTile(
               leading: Icon(Icons.description),
               title: Text("Logs"),
               onTap: ()async{
@@ -655,6 +664,7 @@ class _Home1State extends State<Home1> {
                       ),
                     ),
                     authenticated?Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(height: 20,),
                         Padding(

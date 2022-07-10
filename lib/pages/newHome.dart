@@ -391,6 +391,15 @@ class _Home2State extends State<Home2> {
               },
             ),
             ListTile(
+              leading: Icon(Icons.language),
+              title: Text("Switch to Malayalam"),
+              onTap: (){
+                sharedPreferences.setString("lang","mal");
+                Navigator.pop(context);
+                Navigator.pushReplacementNamed(context, "/initMal");
+              },
+            ),
+            ListTile(
               leading: Icon(Icons.person),
               title: Text("Contact Us"),
               onTap: ()async{

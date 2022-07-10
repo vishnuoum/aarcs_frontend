@@ -157,7 +157,7 @@ class _Home2MalState extends State<Home2Mal> {
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Result'),
+          title: Text('റിസൾട്ട്'),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
@@ -167,7 +167,7 @@ class _Home2MalState extends State<Home2Mal> {
           ),
           actions: <Widget>[
             TextButton(
-              child: Text('Ok'),
+              child: Text('ഓക്കേ'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -186,17 +186,17 @@ class _Home2MalState extends State<Home2Mal> {
       builder: (BuildContext context) {
         loadLeafModel();
         return AlertDialog(
-          title: Text('Scan Leaf'),
+          title: Text('ഇല സ്കാൻ ചെയ്യുക'),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Text("Please select an option."),
+                Text("ദയവായി ഒരു ഓപ്ഷൻ തിരഞ്ഞെടുക്കുക."),
               ],
             ),
           ),
           actions: <Widget>[
             TextButton(
-              child: Text('Open Camera'),
+              child: Text('ക്യാമറ'),
               onPressed: () async{
                 Navigator.of(context).pop();
                 print('Leaf Camera');
@@ -208,11 +208,11 @@ class _Home2MalState extends State<Home2Mal> {
                   );
                   print(recognitions);
                   if(recognitions![0]["confidence"]<0.85){
-                    alertDialog("Could not find the leaf in the image.");
+                    alertDialog("ചിത്രത്തിലെ ഇല കണ്ടെത്താൻ കഴിഞ്ഞില്ല.");
                     return;
                   }
                   if(recognitions[0]["label"].contains("healthy")){
-                    alertDialog("Your plant seems healthy!!");
+                    alertDialog("നിങ്ങളുടെ ചെടി ആരോഗ്യമുള്ളതായി തോന്നുന്നു!!");
                   }
                   else {
                     PaletteGenerator color=await getColorPalette(image.path.substring(1));
@@ -220,7 +220,7 @@ class _Home2MalState extends State<Home2Mal> {
                     double cmp=compareColor(color.dominantColor!.color);
                     print(cmp);
                     if(cmp.toInt()>25){
-                      alertDialog("Could not find the leaf in the image.");
+                      alertDialog("ചിത്രത്തിലെ ഇല കണ്ടെത്താൻ കഴിഞ്ഞില്ല.");
                       return;
                     }
                     var result = await dbObject.getDiseaseMal(
@@ -236,7 +236,7 @@ class _Home2MalState extends State<Home2Mal> {
               },
             ),
             TextButton(
-              child: Text('Open Gallery'),
+              child: Text('ഗാലറി'),
               onPressed: ()async {
                 Navigator.of(context).pop();
                 print('Leaf Gallery');
@@ -248,11 +248,11 @@ class _Home2MalState extends State<Home2Mal> {
                   );
                   print(recognitions);
                   if(recognitions![0]["confidence"]<0.85){
-                    alertDialog("Could not find the leaf in the image.");
+                    alertDialog("ചിത്രത്തിലെ ഇല കണ്ടെത്താൻ കഴിഞ്ഞില്ല.");
                     return;
                   }
                   if(recognitions[0]["label"].contains("healthy")){
-                    alertDialog("Your plant seems healthy!!");
+                    alertDialog("നിങ്ങളുടെ ചെടി ആരോഗ്യമുള്ളതായി തോന്നുന്നു!!");
                   }
                   else{
                     PaletteGenerator color=await getColorPalette(image.path.substring(1));
@@ -260,7 +260,7 @@ class _Home2MalState extends State<Home2Mal> {
                     double cmp=compareColor(color.dominantColor!.color);
                     print(cmp);
                     if(cmp.toInt()>25){
-                      alertDialog("Could not find the leaf in the image.");
+                      alertDialog("ചിത്രത്തിലെ ഇല കണ്ടെത്താൻ കഴിഞ്ഞില്ല.");
                       return;
                     }
                     var result = await dbObject.getDiseaseMal(
@@ -288,17 +288,17 @@ class _Home2MalState extends State<Home2Mal> {
       builder: (BuildContext context) {
         loadSeedlingModel();
         return AlertDialog(
-          title: Text('Scan Seedling'),
+          title: Text('തൈ സ്കാൻ ചെയ്യുക'),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Text("Please select an option."),
+                Text("ദയവായി ഒരു ഓപ്ഷൻ തിരഞ്ഞെടുക്കുക."),
               ],
             ),
           ),
           actions: <Widget>[
             TextButton(
-              child: Text('Open Camera'),
+              child: Text('ക്യാമറ'),
               onPressed: () async{
                 Navigator.of(context).pop();
                 print('Seedling Camera');
@@ -309,7 +309,7 @@ class _Home2MalState extends State<Home2Mal> {
                     path: image.path,   // required
                   );
                   if(recognitions![0]["confidence"]<0.85){
-                    alertDialog("Could not find seedling in the image.");
+                    alertDialog("ചിത്രത്തിൽ തൈ കണ്ടെത്താനായില്ല.");
                     return;
                   }
                   print(recognitions[0]);
@@ -322,7 +322,7 @@ class _Home2MalState extends State<Home2Mal> {
               },
             ),
             TextButton(
-              child: Text('Open Gallery'),
+              child: Text('ഗാലറി'),
               onPressed: () async{
                 Navigator.of(context).pop();
                 print('Seedling Gallery');
@@ -333,7 +333,7 @@ class _Home2MalState extends State<Home2Mal> {
                     path: image.path,   // required
                   );
                   if(recognitions![0]["confidence"]<0.85){
-                    alertDialog("Could not find seedling in the image.");
+                    alertDialog("ചിത്രത്തിൽ തൈ കണ്ടെത്താനായില്ല.");
                     return;
                   }
                   print(recognitions);
@@ -384,15 +384,24 @@ class _Home2MalState extends State<Home2Mal> {
             ),
             ListTile(
               leading: Icon(Icons.home),
-              title: Text("Home Style"),
+              title: Text("ഹോം സ്റ്റൈൽ"),
               onTap: (){
                 Navigator.pop(context);
                 Navigator.pushNamed(context, "/chooseHomeMal");
               },
             ),
             ListTile(
+              leading: Icon(Icons.language),
+              title: Text("ഇംഗ്ലീഷിലേക്ക് മാറുക"),
+              onTap: ()async{
+                await sharedPreferences.remove("lang");
+                Navigator.pop(context);
+                Navigator.pushReplacementNamed(context, "/init");
+              },
+            ),
+            ListTile(
               leading: Icon(Icons.person),
-              title: Text("Contact Us"),
+              title: Text("ഞങ്ങളെ സമീപിക്കുക"),
               onTap: ()async{
                 Navigator.pop(context);
                 await canLaunch("mailto:agri-app@gmail.com?subject=Agri%20App&body=New%20plugin") ? await launch("mailto:agri-app@gmail.com?subject=Agri%20App&body=New%20plugin") : throw 'Could not launch gmail';
@@ -400,7 +409,7 @@ class _Home2MalState extends State<Home2Mal> {
             ),
             authenticated?ListTile(
               leading: Icon(Icons.logout),
-              title: Text("Logout"),
+              title: Text("ലോഗൗട്ട്"),
               onTap: ()async{
                 Navigator.pop(context);
                 await sharedPreferences.remove("phone");
@@ -437,7 +446,7 @@ class _Home2MalState extends State<Home2Mal> {
           ),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 30,vertical: 5),
-            child: Text("A User-Friendly App for farmers",style: TextStyle(fontSize: 17,color: Colors.green),),
+            child: Text("കർഷകർക്കായി ഒരു ഉപയോക്തൃ സൗഹൃദ ആപ്പ്",style: TextStyle(fontSize: 17,color: Colors.green),),
           ),
           SizedBox(height: 20,),
           Row(
@@ -451,7 +460,7 @@ class _Home2MalState extends State<Home2Mal> {
                 onPressed: (){
                   Navigator.pushNamed(context, "/profileMal");
                 },
-                child: Row(children: [Text("Your Profile",style: TextStyle(fontSize: 16),),SizedBox(width: 5,),Icon(Icons.person,size: 18,)],),
+                child: Row(children: [Text("നിങ്ങളുടെ പ്രൊഫൈൽ",style: TextStyle(fontSize: 16),),SizedBox(width: 5,),Icon(Icons.person,size: 18,)],),
                 style: TextButton.styleFrom(elevation: 5,fixedSize: Size.fromWidth(double.infinity),padding: EdgeInsets.all(18),backgroundColor: Colors.green,primary: Colors.white,shape:RoundedRectangleBorder(borderRadius: BorderRadius.circular(50))),
               ):
               ElevatedButton(
@@ -459,14 +468,14 @@ class _Home2MalState extends State<Home2Mal> {
                   Navigator.pushNamed(context, "/loginMal").then((_) => setState(() {}));
 
                 },
-                child: Row(children: [Text("Get Started",style: TextStyle(fontSize: 16),),SizedBox(width: 5,),Icon(Icons.arrow_forward_rounded,size: 18,)],),
+                child: Row(children: [Text("ലോഗിൻ",style: TextStyle(fontSize: 16),),SizedBox(width: 5,),Icon(Icons.arrow_forward_rounded,size: 18,)],),
                 style: TextButton.styleFrom(elevation: 5,fixedSize: Size.fromWidth(double.infinity),padding: EdgeInsets.all(18),backgroundColor: Colors.green,primary: Colors.white,shape:RoundedRectangleBorder(borderRadius: BorderRadius.circular(50))),
               ),
             ],
           ),
           Padding(
             padding: const EdgeInsets.only(left: 30.0,right: 30,top:15,bottom: 5),
-            child: Text("On-Edge Services",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.green,fontSize: 17),),
+            child: Text("ഓൺ-എഡ്ജ് സേവനങ്ങൾ",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.green,fontSize: 17),),
           ),
           Padding(
             padding: const EdgeInsets.only(left: 30.0,right: 30,top:15,bottom: 5),
@@ -492,7 +501,7 @@ class _Home2MalState extends State<Home2Mal> {
                         children: [
                           Icon(FlutterIcon.leaf,color: Colors.green,size: 30,),
                           SizedBox(height: 10,),
-                          Text("Disease",style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 17),)
+                          Text("രോഗങ്ങൾ",style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 12),)
                         ],
                       ),
                     ),
@@ -518,7 +527,7 @@ class _Home2MalState extends State<Home2Mal> {
                         children: [
                           Icon(FlutterIcon.plant,color: Colors.white,size: 30,),
                           SizedBox(height: 10,),
-                          Text("Seedling",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 17),)
+                          Text("തൈകൾ",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 12),)
                         ],
                       ),
                     ),
@@ -543,7 +552,7 @@ class _Home2MalState extends State<Home2Mal> {
                         children: [
                           Icon(FlutterIcon.soil,color: Colors.green,size: 30,),
                           SizedBox(height: 10,),
-                          Text("Crop",style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 17),)
+                          Text("വിളകൾ",style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 12),)
                         ],
                       ),
                     ),
@@ -576,7 +585,7 @@ class _Home2MalState extends State<Home2Mal> {
                         children: [
                           Icon(Icons.calendar_today,color: Colors.green,size: 30,),
                           SizedBox(height: 10,),
-                          Text("Scheduler",style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 17),)
+                          Text("ഷെഡ്യൂളർ",style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 12),)
                         ],
                       ),
                     ),
@@ -591,7 +600,7 @@ class _Home2MalState extends State<Home2Mal> {
               SizedBox(height: 20,),
               Padding(
                 padding: const EdgeInsets.only(left: 30.0,right: 30,top:15,bottom: 5),
-                child: Text("Online Services",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.green,fontSize: 17),),
+                child: Text("ഓൺലൈൻ സേവനങ്ങൾ",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.green,fontSize: 17),),
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 30.0,right: 30,top:15,bottom: 5),
@@ -618,7 +627,7 @@ class _Home2MalState extends State<Home2Mal> {
                             children: [
                               Icon(Icons.shopping_basket,color: Colors.white,size: 30,),
                               SizedBox(height: 10,),
-                              Text("Market",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 17),)
+                              Text("വിപണി",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 12),)
                             ],
                           ),
                         ),
@@ -643,7 +652,7 @@ class _Home2MalState extends State<Home2Mal> {
                             children: [
                               Icon(Icons.location_on,color: Colors.green,size: 30,),
                               SizedBox(height: 10,),
-                              Text("Land",style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 17),)
+                              Text("ഭൂമി",style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 12),)
                             ],
                           ),
                         ),
@@ -669,7 +678,7 @@ class _Home2MalState extends State<Home2Mal> {
                             children: [
                               Icon(Icons.settings,color: Colors.white,size: 30,),
                               SizedBox(height: 10,),
-                              Text("Tools",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 17),)
+                              Text("ഉപകരണങ്ങൾ",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 9),)
                             ],
                           ),
                         ),
@@ -702,7 +711,7 @@ class _Home2MalState extends State<Home2Mal> {
                             children: [
                               Icon(Icons.chat_bubble,color: Colors.green,size: 30,),
                               SizedBox(height: 10,),
-                              Text("Chat",style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 17),)
+                              Text("ചാറ്റ്",style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 12),)
                             ],
                           ),
                         ),
@@ -728,7 +737,7 @@ class _Home2MalState extends State<Home2Mal> {
                             children: [
                               Icon(Icons.question_answer,color: Colors.green,size: 30,),
                               SizedBox(height: 10,),
-                              Text("Post",style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 17),)
+                              Text("പോസ്റ്റുകൾ",style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 12),)
                             ],
                           ),
                         ),
@@ -742,7 +751,7 @@ class _Home2MalState extends State<Home2Mal> {
           SizedBox(height: 20,),
           Padding(
             padding: const EdgeInsets.only(left: 30.0,right: 30,top:15,bottom: 5),
-            child: Text("Common Regional Varieties",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.green,fontSize: 17),),
+            child: Text("പ്രാദേശിക ഇനങ്ങൾ",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.green,fontSize: 17),),
           ),
           SizedBox(
             width: double.infinity,
@@ -772,7 +781,7 @@ class _Home2MalState extends State<Home2Mal> {
                               "assets/images/Rice.jpg",fit: BoxFit.cover,
                             ),
                           ),
-                          Positioned(left: 10,bottom: 15,child: Text("Rice",style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.bold),))
+                          Positioned(left: 10,bottom: 15,child: Text("അരി",style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.bold),))
                         ],
                       ),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -799,7 +808,7 @@ class _Home2MalState extends State<Home2Mal> {
                               "assets/images/Wheat.jpg",fit: BoxFit.cover,
                             ),
                           ),
-                          Positioned(left: 10,bottom: 15,child: Text("Wheat",style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.bold),))
+                          Positioned(left: 10,bottom: 15,child: Text("ഗോതമ്പ്",style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.bold),))
                         ],
                       ),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -826,7 +835,7 @@ class _Home2MalState extends State<Home2Mal> {
                               "assets/images/Sugarcane.jpg",fit: BoxFit.cover,
                             ),
                           ),
-                          Positioned(left: 10,bottom: 15,child: Text("Sugarcane",style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.bold),))
+                          Positioned(left: 10,bottom: 15,child: Text("കരിമ്പ്",style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.bold),))
                         ],
                       ),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -853,7 +862,7 @@ class _Home2MalState extends State<Home2Mal> {
                               "assets/images/Corn.jpg",fit: BoxFit.cover,
                             ),
                           ),
-                          Positioned(left: 10,bottom: 15,child: Text("Corn",style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.bold),))
+                          Positioned(left: 10,bottom: 15,child: Text("ചോളം",style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.bold),))
                         ],
                       ),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),

@@ -409,6 +409,15 @@ class _HomeMalState extends State<HomeMal> {
                 Navigator.pushNamed(context, "/calendarMal",arguments: {"db":dbObject});
               },
             ),
+            ListTile(
+              leading: Icon(Icons.language),
+              title: Text("ഇംഗ്ലീഷിലേക്ക് മാറുക"),
+              onTap: ()async{
+                await sharedPreferences.remove("lang");
+                Navigator.pop(context);
+                Navigator.pushReplacementNamed(context, "/init");
+              },
+            ),
             authenticated?ListTile(
               leading: Icon(Icons.shopping_cart_rounded),
               title: Text("മാർക്കറ്റ് പ്ലേസ്"),

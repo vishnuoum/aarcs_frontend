@@ -302,7 +302,7 @@ class _RecommendMalState extends State<RecommendMal> {
                 logs["logs"].add("${format.format(DateTime.now())} Loading Decision Tree model.....");
                 DecisionTreeClassifier DT=DecisionTreeClassifier();
                 logs["logs"].add("${format.format(DateTime.now())} Loaded Decision Tree model!!!");
-                var result=await DT.predict(features: [N.text,K.text,P.text,temperature.text,humidity.text,ph.text,rainfall.text]);
+                var result=await DT.predict(features: [N.text,K.text,P.text,temperature.text,humidity.text,ph.text,rainfall.text],lang: "mal");
                 Navigator.pop(context);
                 if(result=="error"){
                   logs["logs"].add("${format.format(DateTime.now())} Error thrown.....");
